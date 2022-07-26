@@ -9,18 +9,20 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-default_file_name = "test_data_from_counter.csv"
+default_file_name = "testing/test_data_from_counter.csv"
 global_dict = []
+
 
 def sort_dates(input_list):
     date_output_list = []
     for i in input_list:
-        date_output_list.append(datetime.datetime(int(i[0]+i[1]),
-                                                  int(i[3]+i[4]),
-                                                  int(i[6]+i[7]),
-                                                  int(i[9]+i[10])))
-    date_output_list.sort() # this should go in accending order
+        date_output_list.append(datetime.datetime(int(i[0] + i[1]),
+                                                  int(i[3] + i[4]),
+                                                  int(i[6] + i[7]),
+                                                  int(i[9] + i[10])))
+    date_output_list.sort()  # this should go in ascending order
     return date_output_list
+
 
 # find and open data file
 def open_file(input_value):
@@ -32,8 +34,7 @@ def open_file(input_value):
     if output is not None:
         pass
     else:
-        output = "Error"
- #   print("Output in opening file ", output)
+        output = "Error"  # need a better handle than this
     return output
 
 
@@ -43,8 +44,26 @@ def read_in_data():
     reader = csv.reader(file)
     for each_row in reader:
         global_dict.append(each_row)
-#    print("global dict: ", global_dict)
     file.close()
+
+def reformat_data():
+    """
+    This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
+    :return: list -> WeatherData(datetime, str)
+    """
+    local_x = str()
+    local_y = str()
+    output = []
+
+    for gl in global_dict:
+        for counter, g in enumerate(gl):
+            if counter % 2 == 0:
+                temp = g.replace('"', '')
+                local_x = temp.lstrip()
+            else:
+                local_y = str(g)
+        output = sort_dates(local_x)
+    return
 
 
 # create basic plot
@@ -53,14 +72,8 @@ def basic_plot():
     y_values = []
 
     # even to x, odd to y
-    for gl in global_dict:
-        for counter, g in enumerate(gl):
-            if (counter % 2 == 0):
-                temp = g.replace('"', '')
-                x_values.append(temp.lstrip())
-            else:
-                y_values.append(g)
-    dates = sort_dates(x_values)
+    dates = reformat_data()
+
     x = np.array(dates)
     y = np.array(y_values)
 
