@@ -11,7 +11,7 @@ How long we want to wait between loops (seconds) - one hour.
 
 def file_handler(input_data):
     try:
-        file_object = open(str(datetime.datetime.today())[0:10] + ".txt", 'a')
+        file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
         time_stamp = str(datetime.datetime.now())
         file_object.write(time_stamp[0:16] + "," + str(input_data) + ",")
         file_object.close()
