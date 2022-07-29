@@ -14,6 +14,7 @@ global_dict = []
 
 
 def sort_dates(input_list):
+    print("input list: ", input_list)
     date_output_list = []
     for i in input_list:
         date_output_list.append(datetime.datetime(int(i[0] + i[1]),
@@ -51,28 +52,31 @@ def reformat_data():
     This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
     :return: list -> WeatherData(datetime, str)
     """
-    local_x = str()
-    local_y = str()
+    local_x = []
+    local_y = []
     output = []
 
     for gl in global_dict:
         for counter, g in enumerate(gl):
             if counter % 2 == 0:
                 temp = g.replace('"', '')
-                local_x = temp.lstrip()
+                t = str(temp.lstrip())
+                tmp = str(t[0:2]) + str(t[3:5]) + str(t[6:8])
+                local_x.append(tmp)
+                # print("stuff: {}, {}, {}, hour {}".format(t[0:2], t[3:5], t[6:8], t[9:11]))
             else:
-                local_y = str(g)
-        output = sort_dates(local_x)
-    return
+                local_y.append(str(g))
+        #output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
+    return local_x, local_y
 
 
-# create basic plot
+"""
+This functions takes dates (and hours) and plots them on a basic x-y chart.
+"""
 def basic_plot():
-    x_values = []
-    y_values = []
 
     # even to x, odd to y
-    dates = reformat_data()
+    dates, y_values = reformat_data()
 
     x = np.array(dates)
     y = np.array(y_values)
