@@ -14,7 +14,9 @@ https://bc-robotics.com/tutorials/raspberry-pi-weather-station-part-2/
   <dd>main_testing.py</dd>
   <dd>test_counter.py</dd>
   <dt>counter.py</dt>
-  <dd>
+  <dt>basic_plotting.py</dt>
+  <dt>weather_class.py</dt>
+</dl>
 
 
 # Installs
