@@ -1,3 +1,4 @@
+# REVIEW: putting exception handling around imports suggests that initialisation issues are not resolved
 try:
     import datetime
     import os
@@ -70,10 +71,10 @@ def reformat_data():
     return local_x, local_y
 
 
-"""
-This functions takes dates (and hours) and plots them on a basic x-y chart.
-"""
 def basic_plot():
+    """
+    This functions takes dates (and hours) and plots them on a basic x-y chart.
+    """
 
     # even to x, odd to y
     dates, y_values = reformat_data()
