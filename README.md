@@ -40,4 +40,4 @@ I have considered adding this element at the bottom of crontab. Upon reboot of t
 
 # The output
 1. test_data_from_counter.csv  
-...in the format, "YY-MM-DD HH-SS, XX.X," where X is speed in kmh
+CSV rows using `YY-MM-DD HH-MM-SS, X` format, where X is speed in kmh (float)
