@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+
 """Logs input from a GPIO-connected wind sensor to CSV-formatted output files.
 Additional component plots graphs based on logged sensor values"""
+
 
 import time
 import datetime
