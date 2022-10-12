@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
 
+"""Logs input from a GPIO-connected wind sensor to CSV-formatted output files.
+Additional component plots graphs based on logged sensor values"""
+
+
 import time
 import datetime
 import RPi.GPIO as GPIO
+
+coreDataFilePath = "Use a configuration or variable"
+
+def file_handler(input_data):
+    try:
+        # file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
+        # time_stamp = str(datetime.datetime.now())
+        # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
+        # file_object.close()
+        with open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a') as fileObject:
+            timeStamp = str(datetime.datetime.now)
+            fileObject.write(f"{timeStamp},{input_data},\n")
+    except Exception as err:
+        print("Problem: ", err)
+    return
 
 """
 How long we want to wait between loops (seconds) - one hour.
 3660 = 1 hour
 3420 = 57 minutes. Do this due to starting on reboot and initiating through crontab on the hour.
 """
-
-
-def file_handler(input_data):
-    try:
-        file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
-        time_stamp = str(datetime.datetime.now())
-        file_object.write(time_stamp[0:16] + "," + str(input_data) + ",")
-        file_object.close()
-    except Exception as err:
-        print("Problem: ", err)
-    return
-
-
 interval = 3420
 wind_tick = 0  # Used to count the number of times the wind speed input is triggered
 
