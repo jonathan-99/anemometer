@@ -1,7 +1,7 @@
 # anemometer
 Setting up, and charting a wind speed checker
 
-I wanted a system where I could buy all the bits off the internet without much knoweldge required. The HAT is purchased from BC robotics and very little soldering is required. The tutorial below is where i developed, counter.py.
+I wanted a system where I could buy all the bits off the internet without much knowledge required. The HAT is purchased from BC robotics and very little soldering is required. The tutorial below is where I developed, counter.py.
 
 ## reference URL
 https://bc-robotics.com/tutorials/raspberry-pi-weather-station-part-2/
@@ -29,13 +29,22 @@ pip3 install RPI.GPIO
 pip3 install adafruit-blinka
 ```
 
-# set up crontab by ">sudo crontab -e"
-'''
+# set up crontab 
+use the comment
+```
+sudo crontab -e"
+```
+with 
+```
 MAILTO=""
+```
+at the top of the file and 
+```
 1 * * * * python3 /opt/weather/counter.py 2>&1
-'''
+```
+at the bottom.
 
-This is the current layout of my crontab. It should run counter.py at one minute past the hour, every hour for about 57 minutes. Thus it will give you roughly an hour's worth of data in each hour. The output is done within the code, so any further output should just be piped to standard out.
+This is the current layout of my crontab. It should run counter.py at one minute past the hour, every hour for about 57 minutes. Thus, it will give you roughly an hour's worth of data in each hour. The output is done within the code, so any further output should just be piped to standard out.
 I have considered adding this element at the bottom of crontab. Upon reboot of the device, it should run this script again. I removed this as it might reboot mid-hour and that would mess up the data files.
 ```
 @reboot python3 /home/pi/bc/robotics/counter.py
