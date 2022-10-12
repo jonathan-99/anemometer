@@ -27,6 +27,9 @@ pip3 install RPI.GPIO
 pip3 install adafruit-blinka
 ```
 
+set up crontab by ">sudo crontab -e"
+# MAILTO=""
+# 1 * * * * python3 /home/pi/bc-robotics/counter.py
 Setting up crontab
 This is the current layout of my crontab. It should run counter.py at one minute past the hour, every hour for about 57 minutes. Thus it will give you roughly an hour's worth of data in each hour. The output is done within the code, so any further output should just be piped to standard out.  
 ```
