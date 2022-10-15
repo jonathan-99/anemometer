@@ -38,7 +38,7 @@ class Capture():
         GPIO.add_event_detect(17, GPIO.BOTH)
 
         # Assign the callback to trigger a particular event
-        GPIO.add_event_callback(17, self.WindEventHandler())
+        GPIO.add_event_callback(17, self.WindEventHandler)
 
         # start the timer
         self.windTimer.start()
@@ -49,7 +49,10 @@ class Capture():
 
     ## methods
     def WindEventHandler(self) -> None:
-        """Used to handle events from GPIO(17). Increment the positional tick counter representing the wind sensor"""
+        '''
+        Used to handle events from GPIO(17). Increment the positional tick counter representing the wind sensor
+        :return: None
+        '''
         self.wind_tick += 1
 
     def WriteEvent(self) -> bool:
