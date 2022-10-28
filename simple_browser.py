@@ -3,13 +3,31 @@
 """To set up a simple HTTP browser for seeing what has been logged."""
 
 try:
-    import datetime
-    import os
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import functions
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
+
+
+def generate_html_page() -> None:
+    """
+    This gets a list of file names and creates an small html page with those names
+    :return:
+    """
+    alist = functions.list_file_directory()
+    blist = functions.row_major(alist, len(alist))
+    clist = functions.html_table(blist)
+    c = ""
+    for cl in clist:
+        c += cl
+    start, end = functions.create_html_page_wrapper("table")
+    page = start + c + end
+    try:
+        with open("table.html", "w") as fileObject:
+            fileObject.write(page)
+    except FileExistsError:
+        print("<html><body><h1>" + "File Error" + "</h1></body></html>")
 
 
 class WebServer(BaseHTTPRequestHandler):
@@ -18,6 +36,7 @@ class WebServer(BaseHTTPRequestHandler):
     """
 
     def do_GET(self) -> bool:
+        generate_html_page()
         if self.path == "/":
             self.path = "/index.html"
             try:
