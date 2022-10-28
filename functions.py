@@ -11,6 +11,55 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
+def create_html_page_wrapper(name: str) -> str:
+    """
+    Need the start and end of a html page.
+    :return 2 x str:
+    """
+    title = "<!DOCTYPE html><head><title>" + name
+    title += "</title></head><body>"
+    end_tags = "</body></html>"
+    return title, end_tags
+
+def row_major(alist, sublen) -> list:
+    """
+    NOt quite sure of this yet!
+    :param alist:
+    :param sublen:
+    :return:
+    """
+    return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
+
+def html_table(input_value) -> list:
+    """
+    This function takes values and places them in a html list
+    :param input_value:
+    :return list:
+    """
+    output = []
+    output.append('<table>')
+    for sublist in input_value:
+        output.append('<tr><td>')
+        output.append('</td><td>'.join(sublist))
+        output.append('</td></tr>')
+    output.append('</table>')
+    return output
+
+
+def list_file_directory(directory="data/") -> list:
+    """
+    Search through 'data' folder for all names of files and return them in a string. This will enable
+    the index.html file to list them safely for a browser.
+    :param directory: str
+    :return: list
+    """
+    list_of_files = []
+    for path in os.listdir(directory):
+        # check if current path is a file
+        if os.path.isfile(os.path.join(directory, path)):
+            list_of_files.append(path)
+    return list_of_files
+
 
 def get_yesterdays_date() -> str:
     """

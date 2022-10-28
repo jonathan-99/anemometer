@@ -21,24 +21,27 @@ except ImportError as e:
 
 coreDataFilePath = "Use a configuration or variable"
 interval = 3420
-wind_tick = 0 # Used to count the number of times the wind speed input is triggered
+global wind_tick  # Used to count the number of times the wind speed input is triggered
+
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
     Calculates speed in kph
-    :param input_info - ticks as int:
+    :param input_info: int
     :param spare:
-    :return: speed as float
+    :return: speed: float
     """
     return (input_info*1.2) / spare
+
 
 def wind_trig() -> None:
     global wind_tick
     wind_tick += 1
 
+
 def setup() -> None:
     """
-    Initite all PINs etc.
+    Initiate all PINs etc.
     :return -> None:
     """
     # Set GPIO pins to use BCM pin numbers
@@ -51,17 +54,18 @@ def setup() -> None:
     GPIO.add_event_detect(17, GPIO.BOTH)
     GPIO.add_event_callback(17, wind_trig())
 
+
 def execute() -> None:
+    global wind_tick
     time.sleep(interval)
-    speed = calculate_speed()
+    speed = calculate_speed(wind_tick, interval)
     functions.file_handler(speed)
     wind_tick = 0
 
-    print("This is the speed: ", wind_speed)
+    print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
     setup()
     while True:
         execute()
-
