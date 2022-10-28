@@ -7,7 +7,6 @@ try:
     import sys
     import csv
     import matplotlib.pyplot as plt
-    import matplotlib
     import numpy as np
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -34,7 +33,9 @@ def file_handler(input_data) -> None:
         # time_stamp = str(datetime.datetime.now())
         # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
         # file_object.close()
-        with open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a') as fileObject:
+        temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
+        print("Opening file, ", temp_filename)
+        with open(temp_filename, 'a+') as fileObject:
             timeStamp = str(datetime.datetime.now)
             fileObject.write(f"{timeStamp},{input_data},\n")
     except Exception as err:
