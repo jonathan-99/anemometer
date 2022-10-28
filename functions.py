@@ -36,7 +36,7 @@ def file_handler(input_data) -> None:
         temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
         print("Opening file, ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
-            time_stamp = str(datetime.datetime.now)
+            time_stamp = str(datetime.datetime.now())
             fileObject.write(f"{time_stamp},{input_data},\n")
     except Exception as err:
         print("Problem: ", err)
