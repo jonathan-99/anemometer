@@ -36,8 +36,8 @@ def file_handler(input_data) -> None:
         temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
         print("Opening file, ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
-            timeStamp = str(datetime.datetime.now)
-            fileObject.write(f"{timeStamp},{input_data},\n")
+            time_stamp = str(datetime.datetime.now)
+            fileObject.write(f"{time_stamp},{input_data},\n")
     except Exception as err:
         print("Problem: ", err)
     return
@@ -60,6 +60,7 @@ def open_file(filename):
         output = "Error"  # need a better handle than this
     return output
 
+
 def sort_dates(input_list) -> list:
     """
     Sort the dates of a list from string to YY MM DD HH.
@@ -78,7 +79,7 @@ def sort_dates(input_list) -> list:
     return date_output_list
 
 
-def read_in_data(filename:str)->list:
+def read_in_data(filename: str) -> list:
     """
     Read in data from csv file.
     """
@@ -90,7 +91,8 @@ def read_in_data(filename:str)->list:
     file.close()
     return output
 
-def reformat_data(input_list:list): # how to declare two list returns?
+
+def reformat_data(input_list: list):  # how to declare two list returns?
     """
     This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
     :return: list -> WeatherData(datetime, str)
@@ -109,5 +111,5 @@ def reformat_data(input_list:list): # how to declare two list returns?
                 # print("stuff: {}, {}, {}, hour {}".format(t[0:2], t[3:5], t[6:8], t[9:11]))
             else:
                 local_y.append(str(g))
-        #output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
+        # output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
     return local_x, local_y
