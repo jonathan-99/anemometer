@@ -12,7 +12,7 @@ except ImportError as e:
 
 def generate_html_page() -> None:
     """
-    This gets a list of file names and creates an small html page with those names
+    This gets a list of file names and creates a small html page with those names
     :return:
     """
     alist = functions.list_file_directory()
@@ -35,23 +35,27 @@ class WebServer(BaseHTTPRequestHandler):
     This is a basic server class for serving a html file.
     """
 
+    def serve_page(self, page: str):
+        self.path = page
+        try:
+            print("first, ", self.path[1:])
+            file_to_open = open(self.path[1:]).read()
+            self.send_response(200)
+        except FileNotFoundError as err:
+            file_to_open = str(err)
+            self.send_response(404)
+        self.end_headers()
+        self.wfile.write(bytes(file_to_open, "utf-8"))
+
     def do_GET(self) -> bool:
         generate_html_page()
         if self.path == "/":
-            self.path = "/index.html"
-            try:
-                print("first, ", self.path[1:])
-                file_to_open = open(self.path[1:]).read()
-                self.send_response(200)
-            except FileNotFoundError as err:
-                file_to_open = str(err)
-                self.send_response(404, str(err))
-            self.end_headers()
-            self.wfile.write(bytes(file_to_open, "utf-8"))
+            self.serve_page("/index.html")
             return True
         else:
+            self.serve_page("/table.html")  # this needs to change for other options.
             self.send_response(303, "this is not where you want to be.")
-        return False
+            return False
 
 
 def setup() -> None:
