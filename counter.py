@@ -19,10 +19,6 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-coreDataFilePath = "Use a configuration or variable"
-interval = 3420
-global wind_tick  # Used to count the number of times the wind speed input is triggered
-
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
@@ -34,7 +30,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
     return (input_info*1.2) / spare
 
 
-def wind_trig() -> None:
+def wind_trig(self) -> None:
     global wind_tick
     wind_tick += 1
 
@@ -44,6 +40,12 @@ def setup() -> None:
     Initiate all PINs etc.
     :return -> None:
     """
+    global coreDataFilePath
+    coreDataFilePath = "Use a configuration or variable"
+    global interval
+    interval = 3420
+    global wind_tick  # Used to count the number of times the wind speed input is triggered
+
     # Set GPIO pins to use BCM pin numbers
     GPIO.setmode(GPIO.BCM)
 
@@ -52,7 +54,7 @@ def setup() -> None:
 
     # Event to detect wind (4 ticks per revolution)
     GPIO.add_event_detect(17, GPIO.BOTH)
-    GPIO.add_event_callback(17, wind_trig())
+    GPIO.add_event_callback(17, wind_trig)
 
 
 def execute() -> None:
