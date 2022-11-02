@@ -70,13 +70,13 @@ def execute() -> None:
     time.sleep(interval)
     speed = calculate_speed(wind_tick.show_count(), interval)
     functions.file_handler(speed)
-    wind_tick.__init__()
+    a_count = wind_tick.__init__()
 
     print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
-    wind_tick()
+    a_count = wind_tick.__init__()
     setup()
     while True:
         execute()
