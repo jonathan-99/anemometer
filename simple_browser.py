@@ -6,6 +6,7 @@ try:
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import functions
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -15,6 +16,9 @@ def generate_html_page() -> None:
     This gets a list of file names and creates a small html page with those names
     :return:
     """
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("simple browser generate_html_page()")
+
     alist = functions.list_file_directory()
     blist = functions.row_major(alist, len(alist))
     clist = functions.html_table(blist)
@@ -59,9 +63,12 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 def setup() -> None:
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("simple browser setup()")
     server = HTTPServer(('localhost', 7000), WebServer)
     server.serve_forever()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename="/logging/log.txt")
     setup()

@@ -16,8 +16,10 @@ try:
     import RPi.GPIO as GPIO
     import functions
     import time
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
+    logging.critical('Importing Error')
 
 class wind_tick():
     global count
@@ -43,6 +45,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 def wind_trig(self) -> None:
     a_count.add_count()
+    logging.info('Hit wind_trig(). ')
 
 
 def setup() -> None:
@@ -50,6 +53,8 @@ def setup() -> None:
     Initiate all PINs etc.
     :return -> None:
     """
+
+    logging.info('Initial Counter.py setup()')
     global coreDataFilePath
     coreDataFilePath = "Use a configuration or variable"
     global interval
@@ -76,6 +81,7 @@ def execute() -> None:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename="/logging/log.txt", level=logging.DEBUG)
     a_count = wind_tick()
     setup()
     while True:
