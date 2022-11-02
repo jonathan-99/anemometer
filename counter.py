@@ -19,28 +19,42 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-coreDataFilePath = "Use a configuration or variable"
-interval = 3420
-wind_tick = 0 # Used to count the number of times the wind speed input is triggered
+class wind_tick():
+    global count
+
+    def __init__(self):
+        self.count = 0
+
+    def add_count(self):
+        self.count = self.count + 1
+
+    def show_count(self):
+        return self.count
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
     Calculates speed in kph
-    :param input_info - ticks as int:
+    :param input_info: int
     :param spare:
-    :return: speed as float
+    :return: speed: float
     """
     return (input_info*1.2) / spare
 
-def wind_trig() -> None:
-    global wind_tick
-    wind_tick += 1
+
+def wind_trig(self) -> None:
+    a_count.add_count()
+
 
 def setup() -> None:
     """
-    Initite all PINs etc.
+    Initiate all PINs etc.
     :return -> None:
     """
+    global coreDataFilePath
+    coreDataFilePath = "Use a configuration or variable"
+    global interval
+    interval = 3420
+
     # Set GPIO pins to use BCM pin numbers
     GPIO.setmode(GPIO.BCM)
 
@@ -49,19 +63,20 @@ def setup() -> None:
 
     # Event to detect wind (4 ticks per revolution)
     GPIO.add_event_detect(17, GPIO.BOTH)
-    GPIO.add_event_callback(17, wind_trig())
+    GPIO.add_event_callback(17, wind_trig)
+
 
 def execute() -> None:
     time.sleep(interval)
-    speed = calculate_speed()
+    speed = calculate_speed(wind_tick.show_count(), interval)
     functions.file_handler(speed)
-    wind_tick = 0
+    a_count = wind_tick()
 
-    print("This is the speed: ", wind_speed)
+    print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
+    a_count = wind_tick()
     setup()
     while True:
         execute()
-

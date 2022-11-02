@@ -7,10 +7,58 @@ try:
     import sys
     import csv
     import matplotlib.pyplot as plt
-    import matplotlib
     import numpy as np
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
+
+def create_html_page_wrapper(name: str) -> str:
+    """
+    Need the start and end of a html page.
+    :return 2 x str:
+    """
+    title = "<!DOCTYPE html><head><title>" + name
+    title += "</title></head><body>"
+    end_tags = "</body></html>"
+    return title, end_tags
+
+def row_major(alist, sublen) -> list:
+    """
+    NOt quite sure of this yet!
+    :param alist:
+    :param sublen:
+    :return:
+    """
+    return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
+
+def html_table(input_value) -> list:
+    """
+    This function takes values and places them in a html list
+    :param input_value:
+    :return list:
+    """
+    output = []
+    output.append('<table>')
+    for sublist in input_value:
+        output.append('<tr><td>')
+        output.append('</td><td>'.join(sublist))
+        output.append('</td></tr>')
+    output.append('</table>')
+    return output
+
+
+def list_file_directory(directory="data/") -> list:
+    """
+    Search through 'data' folder for all names of files and return them in a string. This will enable
+    the index.html file to list them safely for a browser.
+    :param directory: str
+    :return: list
+    """
+    list_of_files = []
+    for path in os.listdir(directory):
+        # check if current path is a file
+        if os.path.isfile(os.path.join(directory, path)):
+            list_of_files.append(path)
+    return list_of_files
 
 
 def get_yesterdays_date() -> str:
@@ -34,9 +82,11 @@ def file_handler(input_data) -> None:
         # time_stamp = str(datetime.datetime.now())
         # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
         # file_object.close()
-        with open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a') as fileObject:
-            timeStamp = str(datetime.datetime.now)
-            fileObject.write(f"{timeStamp},{input_data},\n")
+        temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
+        print("Opening file, ", temp_filename)
+        with open(temp_filename, 'a+') as fileObject:
+            time_stamp = str(datetime.datetime.now())
+            fileObject.write(f"{time_stamp},{input_data},\n")
     except Exception as err:
         print("Problem: ", err)
     return
@@ -59,6 +109,7 @@ def open_file(filename):
         output = "Error"  # need a better handle than this
     return output
 
+
 def sort_dates(input_list) -> list:
     """
     Sort the dates of a list from string to YY MM DD HH.
@@ -77,7 +128,7 @@ def sort_dates(input_list) -> list:
     return date_output_list
 
 
-def read_in_data(filename:str)->list:
+def read_in_data(filename: str) -> list:
     """
     Read in data from csv file.
     """
@@ -89,7 +140,8 @@ def read_in_data(filename:str)->list:
     file.close()
     return output
 
-def reformat_data(input_list:list): # how to declare two list returns?
+
+def reformat_data(input_list: list):  # how to declare two list returns?
     """
     This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
     :return: list -> WeatherData(datetime, str)
@@ -108,5 +160,5 @@ def reformat_data(input_list:list): # how to declare two list returns?
                 # print("stuff: {}, {}, {}, hour {}".format(t[0:2], t[3:5], t[6:8], t[9:11]))
             else:
                 local_y.append(str(g))
-        #output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
+        # output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
     return local_x, local_y
