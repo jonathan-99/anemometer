@@ -42,7 +42,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def wind_trig(self) -> None:
-    wind_tick.add_count()
+    a_count.add_count()
 
 
 def setup() -> None:
