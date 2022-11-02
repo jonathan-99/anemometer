@@ -25,6 +25,12 @@ class wind_tick():
     def __init__(self):
         self.count = 0
 
+    def add_count(self):
+        self.count = self.count + 1
+
+    def show_count(self):
+        return self.count
+
 def calculate_speed(input_info: int, spare: int) -> float:
     """
     Calculates speed in kph
@@ -36,7 +42,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def wind_trig(self) -> None:
-    wind_tick.count += 1
+    wind_tick.add_count()
 
 
 def setup() -> None:
@@ -62,9 +68,9 @@ def setup() -> None:
 
 def execute() -> None:
     time.sleep(interval)
-    speed = calculate_speed(wind_tick, interval)
+    speed = calculate_speed(wind_tick.show_count(), interval)
     functions.file_handler(speed)
-    wind_tick = 0
+    wind_tick.__init__()
 
     print("This is the speed: ", speed)
 
