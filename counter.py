@@ -19,7 +19,11 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-global wind_tick  # Used to count the number of times the wind speed input is triggered
+class wind_tick():
+    global count
+
+    def __init__(self):
+        self.count = 0
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
@@ -32,7 +36,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def wind_trig(self) -> None:
-    wind_tick += 1
+    wind_tick.count += 1
 
 
 def setup() -> None:
@@ -66,6 +70,7 @@ def execute() -> None:
 
 
 if __name__ == '__main__':
+    wind_tick()
     setup()
     while True:
         execute()
