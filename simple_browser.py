@@ -30,8 +30,9 @@ def generate_html_page() -> None:
     try:
         with open("table.html", "w") as fileObject:
             fileObject.write(page)
-    except FileExistsError:
+    except FileExistsError as e:
         print("<html><body><h1>" + "File Error" + "</h1></body></html>")
+        logging.error("File Exists Error in generate_html_page()", exc_info=True)
 
 
 class WebServer(BaseHTTPRequestHandler):
@@ -48,6 +49,7 @@ class WebServer(BaseHTTPRequestHandler):
         except FileNotFoundError as err:
             file_to_open = str(err)
             self.send_response(404)
+            logging.error("File Not Found Error - in serve_page()", exc_info=True)
         self.end_headers()
         self.wfile.write(bytes(file_to_open, "utf-8"))
 

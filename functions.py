@@ -96,8 +96,9 @@ def file_handler(input_data) -> None:
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now())
             fileObject.write(f"{time_stamp},{input_data},\n")
+            logging.info("File added to in file_handler()")
     except Exception as err:
-        print("Problem: ", err)
+        logging.error("Exception error in file_handler()", exc_info=True)
     return
 
 
@@ -114,7 +115,7 @@ def open_file(filename):
     try:
         output = open(filename, "r")
     except Exception as err:
-        print("error opening file: ", err)
+        logging.error("Exception error in open_file()", exc_info=True)
     if output is not None:
         pass
     else:
