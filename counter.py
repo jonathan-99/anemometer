@@ -24,13 +24,14 @@ except Exception as e:
 class WindMonitor:
     global count
 
-    def __init__(self):
+    def __init__(self, number: int):
         logging.info('Initiating the weather monitor')
         self.count = 0
         global _coreDataFilePath
         _coreDataFilePath = "Use a configuration or variable"
         global interval
-        interval = 3420
+        interval = number
+        # interval = 3420
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
@@ -74,9 +75,10 @@ def execute(windObject) -> None:
 
 
 if __name__ == '__main__':
+    debugging_interval = 10
     logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
     formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
                                   datefmt='%Y-%m-%d %H:%M:%S')
-    a_count = WindMonitor()
+    a_count = WindMonitor(debugging_interval)
     while True:
         execute(a_count)
