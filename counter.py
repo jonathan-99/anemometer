@@ -40,7 +40,7 @@ class WindMonitor:
 
         # Event to detect wind (4 ticks per revolution)
         GPIO.add_event_detect(17, GPIO.BOTH)
-        GPIO.add_event_callback(17, self.count)
+        GPIO.add_event_callback(17, self.add_count())
 
     def add_count(self):
         self.count += 1
@@ -50,6 +50,7 @@ class WindMonitor:
 
     def reset(self):
         self.count = 0
+
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
@@ -61,17 +62,19 @@ def calculate_speed(input_info: int, spare: int) -> float:
     return (input_info*1.2) / spare
 
 
-def execute(WindObject) -> None:
+def execute(windObject) -> None:
     time.sleep(interval)
-    speed = calculate_speed(WindObject.show_count(), interval)
+    speed = calculate_speed(windObject.show_count(), interval)
     functions.file_handler(speed)
-    WindObject.reset()
+    windObject.reset()
 
     print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
     logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s",
+                                  datefmt='%Y-%m-%d %H:%M:%S')
     a_count = WindMonitor()
     while True:
         execute(a_count)
