@@ -1,1 +1,3 @@
+
+INFO:root:Initiating the weather monitor
 INFO:root:Initiating the weather monitor

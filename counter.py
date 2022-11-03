@@ -63,8 +63,10 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def execute(windObject) -> None:
+    logging.info('Ticks count: ', windObject.show_count())
     time.sleep(interval)
     speed = calculate_speed(windObject.show_count(), interval)
+    logging.info("Ticks count: ", windObject.show_count(), "speed ", speed)
     functions.file_handler(speed)
     windObject.reset()
 
@@ -73,7 +75,7 @@ def execute(windObject) -> None:
 
 if __name__ == '__main__':
     logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s;%(levelname)s;%(message)s",
+    formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
                                   datefmt='%Y-%m-%d %H:%M:%S')
     a_count = WindMonitor()
     while True:
