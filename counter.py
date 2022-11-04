@@ -28,6 +28,10 @@ logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(a
 class WindMonitor:
     coreDataFilePath = "Use a configuration or variable"
 
+    def add_count(self):
+        logging.debug('add_count()')
+        self.count += 1
+
     def __init__(self, intervalNumber: int, pinNumber: int):
         self.PIN = pinNumber
         self.interval = intervalNumber
@@ -35,20 +39,13 @@ class WindMonitor:
         self.count = 0
         logging.info('interval: ', str(self.interval), ' : ', str(self.count))
 
-        # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
         logging.info('setmode()')
-        # Set digital pin 17 to an input and enable the pull-up
-        GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         logging.info('setup()')
-        # Event to detect wind (4 ticks per revolution)
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         logging.info('add_event_detect()')
         GPIO.add_event_callback(17, self.add_count())
-
-    def add_count(self):
-        logging.debug('add_count()')
-        self.count += 1
 
     def show_count(self):
         return self.count
