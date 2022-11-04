@@ -31,15 +31,14 @@ logger.Formatter("%(asctime)s , %(levelname)s , %(message)s",
 class WindMonitor:
     global count
 
-    def __init__(self, number: int):
+    def __init__(self, intervalNumber: int, pinNumber: int):
+        self.PIN = pinNumber
+        self.interval = intervalNumber
         logger.info('Initiating the weather monitor')
         self.count = 0
         global _coreDataFilePath
         _coreDataFilePath = "Use a configuration or variable"
-        global interval
-        interval = number
-        logger.info('interval: ', str(interval))
-        # interval = 3420
+        logger.info('interval: ', str(self.interval))
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
@@ -48,7 +47,7 @@ class WindMonitor:
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         logger.info('setup()')
         # Event to detect wind (4 ticks per revolution)
-        GPIO.add_event_detect(17, GPIO.BOTH)
+        GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         logger.info('add_event_detect()')
         GPIO.add_event_callback(17, self.add_count())
 
@@ -75,8 +74,8 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 def execute(windObject) -> None:
     logger.debug('Ticks count: ', str(windObject.show_count()))
-    time.sleep(interval)
-    speed = calculate_speed(windObject.show_count(), interval)
+    time.sleep(windObject.interval)
+    speed = calculate_speed(windObject.show_count(), windObject.interval)
     logger.debug("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
     functions.file_handler(speed)
     windObject.reset()
@@ -85,8 +84,7 @@ def execute(windObject) -> None:
 
 
 if __name__ == '__main__':
-    debugging_interval = 10
-
-    a_count = WindMonitor(debugging_interval)
+    # interval = 3420
+    a_count = WindMonitor(10, 17)
     while True:
         execute(a_count)
