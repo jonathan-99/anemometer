@@ -6,7 +6,7 @@ Additional component plots graphs based on logged sensor values.
 
 How long we want to wait between loops (seconds) - one hour.
 3660 = 1 hour
-3420 = 57 minutes. Do this due to starting on reboot and initiating through crontab on the hour.
+3420 = 57 minutes. Do this due to initiating through crontab on the hour which might be out.
 """
 
 try:
@@ -24,18 +24,16 @@ except Exception as e:
 #                                  datefmt='%Y-%m-%d %H:%M:%S')
 logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(asctime)s , %(levelname)s , %(message)s")
 
-class WindMonitor:
-    global count
 
+class WindMonitor:
+    coreDataFilePath = "Use a configuration or variable"
 
     def __init__(self, intervalNumber: int, pinNumber: int):
         self.PIN = pinNumber
         self.interval = intervalNumber
         logging.info('Initiating the weather monitor')
         self.count = 0
-        global _coreDataFilePath
-        _coreDataFilePath = "Use a configuration or variable"
-        logging.info('interval: ', str(self.interval))
+        logging.info('interval: ', str(self.interval), ' : ', str(self.count))
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
