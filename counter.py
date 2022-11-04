@@ -27,6 +27,7 @@ logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(a
 class WindMonitor:
     global count
 
+
     def __init__(self, intervalNumber: int, pinNumber: int):
         self.PIN = pinNumber
         self.interval = intervalNumber
