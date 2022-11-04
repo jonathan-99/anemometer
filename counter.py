@@ -31,19 +31,22 @@ class WindMonitor:
         _coreDataFilePath = "Use a configuration or variable"
         global interval
         interval = number
+        logging.info('interval: ', str(interval))
         # interval = 3420
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
-
+        logging.info('setmode()')
         # Set digital pin 17 to an input and enable the pull-up
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+        logging.info('setup()')
         # Event to detect wind (4 ticks per revolution)
         GPIO.add_event_detect(17, GPIO.BOTH)
+        logging.info('add_event_detect()')
         GPIO.add_event_callback(17, self.add_count())
 
     def add_count(self):
+        logging.info('add_count()')
         self.count += 1
 
     def show_count(self):
