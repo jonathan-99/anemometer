@@ -24,25 +24,29 @@ except Exception as e:
 class WindMonitor:
     global count
 
-    def __init__(self):
+    def __init__(self, number: int):
         logging.info('Initiating the weather monitor')
         self.count = 0
         global _coreDataFilePath
         _coreDataFilePath = "Use a configuration or variable"
         global interval
-        interval = 3420
+        interval = number
+        logging.info('interval: ', str(interval))
+        # interval = 3420
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
-
+        logging.info('setmode()')
         # Set digital pin 17 to an input and enable the pull-up
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+        logging.info('setup()')
         # Event to detect wind (4 ticks per revolution)
         GPIO.add_event_detect(17, GPIO.BOTH)
-        GPIO.add_event_callback(17, self.count)
+        logging.info('add_event_detect()')
+        GPIO.add_event_callback(17, self.add_count())
 
     def add_count(self):
+        logging.info('add_count()')
         self.count += 1
 
     def show_count(self):
@@ -50,6 +54,7 @@ class WindMonitor:
 
     def reset(self):
         self.count = 0
+
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
@@ -61,17 +66,22 @@ def calculate_speed(input_info: int, spare: int) -> float:
     return (input_info*1.2) / spare
 
 
-def execute(WindObject) -> None:
+def execute(windObject) -> None:
+    logging.info('Ticks count: ', str(windObject.show_count()))
     time.sleep(interval)
-    speed = calculate_speed(WindObject.show_count(), interval)
+    speed = calculate_speed(windObject.show_count(), interval)
+    logging.info("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
     functions.file_handler(speed)
-    WindObject.reset()
+    windObject.reset()
 
     print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
+    debugging_interval = 10
     logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
-    a_count = WindMonitor()
+    formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    a_count = WindMonitor(debugging_interval)
     while True:
         execute(a_count)
