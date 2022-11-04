@@ -20,33 +20,40 @@ try:
 except Exception as e:
     print("importing error: ", e)
 
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+console = logging.StreamHandler()
+logger = logging.getLogger().addHandler(console)
+logger.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
+logger.Formatter("%(asctime)s , %(levelname)s , %(message)s",
+                                  datefmt='%Y-%m-%d %H:%M:%S')
 
 class WindMonitor:
     global count
 
     def __init__(self, number: int):
-        logging.info('Initiating the weather monitor')
+        logger.info('Initiating the weather monitor')
         self.count = 0
         global _coreDataFilePath
         _coreDataFilePath = "Use a configuration or variable"
         global interval
         interval = number
-        logging.info('interval: ', str(interval))
+        logger.info('interval: ', str(interval))
         # interval = 3420
 
         # Set GPIO pins to use BCM pin numbers
         GPIO.setmode(GPIO.BCM)
-        logging.info('setmode()')
+        logger.info('setmode()')
         # Set digital pin 17 to an input and enable the pull-up
         GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        logging.info('setup()')
+        logger.info('setup()')
         # Event to detect wind (4 ticks per revolution)
         GPIO.add_event_detect(17, GPIO.BOTH)
-        logging.info('add_event_detect()')
+        logger.info('add_event_detect()')
         GPIO.add_event_callback(17, self.add_count())
 
     def add_count(self):
-        logging.info('add_count()')
+        logger.debug('add_count()')
         self.count += 1
 
     def show_count(self):
@@ -67,10 +74,10 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def execute(windObject) -> None:
-    logging.info('Ticks count: ', str(windObject.show_count()))
+    logger.debug('Ticks count: ', str(windObject.show_count()))
     time.sleep(interval)
     speed = calculate_speed(windObject.show_count(), interval)
-    logging.info("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
+    logger.debug("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
     functions.file_handler(speed)
     windObject.reset()
 
@@ -79,9 +86,7 @@ def execute(windObject) -> None:
 
 if __name__ == '__main__':
     debugging_interval = 10
-    logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
-                                  datefmt='%Y-%m-%d %H:%M:%S')
+
     a_count = WindMonitor(debugging_interval)
     while True:
         execute(a_count)
