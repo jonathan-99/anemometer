@@ -37,7 +37,7 @@ class WindMonitor:
         self.interval = intervalNumber
         logging.info('Initiating the weather monitor')
         self.count = 0
-        logging.info('interval: ', str(self.interval), ' : ', str(self.count))
+        logging.info('interval: ' + str(self.interval) + ' : ' + str(self.count))
 
         GPIO.setmode(GPIO.BCM)
         logging.info('setmode()')
@@ -65,12 +65,10 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def execute(windObject) -> None:
-    logging.debug('Ticks count: ', str(windObject.show_count()))
+    logging.debug('Ticks count: ' + str(windObject.show_count()))
     time.sleep(windObject.interval)
     speed = calculate_speed(windObject.show_count(), windObject.interval)
-    temp = str(windObject.show_count())
-    print("temp, ", temp)
-    logging.debug("Ticks count: ", temp, "speed ", str(speed))
+    logging.debug("Ticks count: " + str(windObject.show_count()) + "speed " + str(speed))
     functions.file_handler(speed)
     windObject.reset()
 
