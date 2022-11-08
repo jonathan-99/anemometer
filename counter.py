@@ -66,11 +66,11 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 
 def execute(windObject) -> None:
-    logging.debug('Ticks count: ' + str(windObject.show_count()))
+    logging.debug('Ticks first count: ' + str(windObject.show_count()))
     time.sleep(windObject.interval)
     speed = calculate_speed(windObject.show_count(), windObject.interval)
     print("wind count: ", windObject.show_count(), " : ", type(windObject.show_count()))
-    logging.debug("Ticks count: " + str(windObject.show_count()) + " speed " + str(speed))
+    logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
     windObject.reset()
 
