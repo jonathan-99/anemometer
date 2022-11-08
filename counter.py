@@ -45,7 +45,7 @@ class WindMonitor:
         logging.info('setup()')
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         logging.info('add_event_detect()')
-        GPIO.add_event_callback(17, self.add_count())
+        GPIO.add_event_callback(17, self.add_count)
 
     def show_count(self):
         return self.count
