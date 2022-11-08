@@ -45,7 +45,7 @@ class WindMonitor:
         logging.info('setup()')
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         logging.info('add_event_detect()')
-        GPIO.add_event_callback(17, self.add_count)
+        GPIO.add_event_callback(self.PIN, self.add_count)
 
     def show_count(self):
         return self.count
@@ -61,13 +61,15 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
-    logging.debug("I am in calculating speed number: ", input_info)
+    logging.debug("I am in calculating speed number: " + str(input_info))
     return (input_info*1.2) / spare
 
 
 def execute(windObject) -> None:
     logging.debug('Ticks first count: ' + str(windObject.show_count()))
+    print("here")
     time.sleep(windObject.interval)
+    print("now here")
     speed = calculate_speed(windObject.show_count(), windObject.interval)
     print("wind count: ", windObject.show_count(), " : ", type(windObject.show_count()))
     logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
