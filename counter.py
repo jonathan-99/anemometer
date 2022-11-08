@@ -61,6 +61,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
+    logging.debug("I am in calculating speed number: ", input_info)
     return (input_info*1.2) / spare
 
 
