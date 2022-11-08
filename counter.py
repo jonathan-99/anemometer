@@ -50,6 +50,9 @@ class WindMonitor:
     def show_count(self):
         return self.count
 
+    def get_interval(self):
+        return self.interval
+
     def reset(self):
         self.count = 0
 
@@ -68,7 +71,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
 def execute(windObject) -> None:
     logging.debug('Ticks first count: ' + str(windObject.show_count()))
     print("here")
-    time.sleep(windObject.interval)
+    time.sleep(windObject.get_interval())
     print("now here")
     speed = calculate_speed(windObject.show_count(), windObject.interval)
     print("wind count: ", windObject.show_count(), " : ", type(windObject.show_count()))
