@@ -68,7 +68,9 @@ def execute(windObject) -> None:
     logging.debug('Ticks count: ', str(windObject.show_count()))
     time.sleep(windObject.interval)
     speed = calculate_speed(windObject.show_count(), windObject.interval)
-    logging.debug("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
+    temp = str(windObject.show_count())
+    print("temp, ", temp)
+    logging.debug("Ticks count: ", temp, "speed ", str(speed))
     functions.file_handler(speed)
     windObject.reset()
 
