@@ -17,6 +17,7 @@ try:
     import functions
     import time
     import logging
+    from functools import partial
 except Exception as e:
     print("importing error: ", e)
 
@@ -28,16 +29,13 @@ logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(a
 class WindMonitor:
     coreDataFilePath = "Use a configuration or variable"
 
-    def add_count(self):
-        logging.debug('add_count()')
-        self.count += 1
 
-    def __init__(self, intervalNumber: int, pinNumber: int):
+    def __init__(self, intervalNumber: int, pinNumber: int) -> None:
         self.PIN = pinNumber
         self.interval = intervalNumber
         logging.info('Initiating the weather monitor')
         self.count = 0
-        logging.info('interval: ', str(self.interval), ' : ', str(self.count))
+        logging.info('interval: ' + str(self.interval) + ' : count ' + str(self.count))
 
         GPIO.setmode(GPIO.BCM)
         logging.info('setmode()')
@@ -45,10 +43,21 @@ class WindMonitor:
         logging.info('setup()')
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         logging.info('add_event_detect()')
-        GPIO.add_event_callback(17, self.add_count)
+        GPIO.add_event_callback(self.PIN, partial(self.add_count))
+
+
+    def add_count(self):
+        logging.debug('add_count()')
+        self.count += 1
+
 
     def show_count(self):
         return self.count
+
+
+    def get_interval(self):
+        return self.interval
+
 
     def reset(self):
         self.count = 0
@@ -61,14 +70,16 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
+    logging.debug("I am in calculating speed number: " + str(input_info))
     return (input_info*1.2) / spare
 
 
 def execute(windObject) -> None:
-    logging.debug('Ticks count: ', str(windObject.show_count()))
-    time.sleep(windObject.interval)
-    speed = calculate_speed(windObject.show_count(), windObject.interval)
-    logging.debug("Ticks count: ", str(windObject.show_count()), "speed ", str(speed))
+    logging.debug('Ticks first count: ' + str(windObject.show_count()))
+    time.sleep(windObject.get_interval())
+    logging.debug('sleep interval: ')
+    speed = calculate_speed(windObject.show_count(), windObject.get_interval())
+    logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
     windObject.reset()
 
