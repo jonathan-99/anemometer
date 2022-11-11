@@ -23,7 +23,10 @@ def windtrig() -> None:
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(17, GPIO.BOTH)
-GPIO.add_event_callback(17, windtrig)
+try:
+    GPIO.add_event_callback(17, windtrig)
+except TypeError as e:
+    windtrig()
 
 while True:
     time.sleep(interval)
