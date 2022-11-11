@@ -36,6 +36,12 @@ pip3 install adafruit-blinka
 python3 -m pip install python3-matplotlib
 ```
 
+## Issues with installs
+sudo locale-gen en_GB.UTF-8 UTF-8
+export LANGUAGE=en_GB.UTF-8
+export LC_ALL=en_GB.UTF-8 # issues with this one
+sudo update-locale en_GB.UTF-8 UTF-8
+
 # Setting up crontab
 This is the current layout of my crontab. It should run counter.py at one minute past the hour, every hour for about 57 minutes. Thus it will give you roughly an hour's worth of data in each hour. The output is done within the code, so any further output should just be piped to standard out.  
 ```
