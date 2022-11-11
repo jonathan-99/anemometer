@@ -22,7 +22,7 @@ except Exception as e:
     print("importing error: ", e)
 
 # formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
-#                                  datefmt='%Y-%m-%d %H:%M:%S')
+#                                  datefmt='%Y-%m-%d , %H:%M:%S')
 logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(asctime)s , %(levelname)s , %(message)s")
 
 
