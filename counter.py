@@ -76,9 +76,8 @@ def execute(windObject) -> None:
     speed = calculate_speed(windObject.show_count(), windObject.get_interval())
     logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
-    windObject.reset()
-
     print("This is the speed: ", speed)
+    windObject.reset()
 
 
 if __name__ == '__main__':
