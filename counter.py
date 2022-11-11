@@ -44,8 +44,8 @@ class WindMonitor:
         logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
     def add_count(self):
-        logging.debug('add_count()')
         self.count += 1
+        logging.debug('Adding a tick: ' + str(self.show_count()))
 
 
     def show_count(self):
