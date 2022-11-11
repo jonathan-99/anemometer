@@ -40,7 +40,10 @@ class WindMonitor:
         GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         trying_something = partial(self.add_count)
-        GPIO.add_event_callback(self.PIN, trying_something)
+        try:
+            GPIO.add_event_callback(self.PIN, trying_something)
+        except TypeError as e:
+            self.add_count()
         logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
     def add_count(self):
