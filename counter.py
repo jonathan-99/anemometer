@@ -33,18 +33,15 @@ class WindMonitor:
     def __init__(self, intervalNumber: int, pinNumber: int) -> None:
         self.PIN = pinNumber
         self.interval = intervalNumber
-        logging.info('Initiating the weather monitor')
+        logging.debug('Initiating the weather monitor')
         self.count = 0
-        logging.info('interval: ' + str(self.interval) + ' : count ' + str(self.count))
 
         GPIO.setmode(GPIO.BCM)
-        logging.info('setmode()')
         GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        logging.info('setup()')
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
-        logging.info('add_event_detect()')
-        GPIO.add_event_callback(self.PIN, partial(self.add_count))
-
+        trying_something = partial(self.add_count)
+        GPIO.add_event_callback(self.PIN, trying_something())
+        logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
     def add_count(self):
         logging.debug('add_count()')
@@ -77,13 +74,11 @@ def calculate_speed(input_info: int, spare: int) -> float:
 def execute(windObject) -> None:
     logging.debug('Ticks first count: ' + str(windObject.show_count()))
     time.sleep(windObject.get_interval())
-    logging.debug('sleep interval: ')
     speed = calculate_speed(windObject.show_count(), windObject.get_interval())
     logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
-    windObject.reset()
-
     print("This is the speed: ", speed)
+    windObject.reset()
 
 
 if __name__ == '__main__':

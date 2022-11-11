@@ -85,18 +85,18 @@ def file_handler(input_data) -> None:
     """
 
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("file_handler")
+    logging.debug("file_handler")
     try:
         # file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
         # time_stamp = str(datetime.datetime.now())
         # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
         # file_object.close()
         temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
-        print("Opening file, ", temp_filename)
+        logging.debug("Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now())
             fileObject.write(f"{time_stamp},{input_data},\n")
-            logging.info("File added to in file_handler()")
+            logging.debug("File added to in file_handler()")
     except Exception as err:
         logging.error("Exception error in file_handler()", exc_info=True)
     return
@@ -110,7 +110,7 @@ def open_file(filename):
     """
 
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("opening file with read-only")
+    logging.debug("opening file with read-only")
     output = ""
     try:
         output = open(filename, "r")
