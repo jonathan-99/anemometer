@@ -40,12 +40,12 @@ class WindMonitor:
         GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         trying_something = partial(self.add_count)
-        GPIO.add_event_callback(self.PIN, trying_something())
+        GPIO.add_event_callback(self.PIN, trying_something)
         logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
     def add_count(self):
-        logging.debug('add_count()')
         self.count += 1
+        logging.debug('Adding a tick: ' + str(self.show_count()))
 
 
     def show_count(self):
@@ -78,7 +78,6 @@ def execute(windObject) -> None:
     logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
     print("This is the speed: ", speed)
-    windObject.reset()
 
 
 if __name__ == '__main__':
@@ -86,3 +85,4 @@ if __name__ == '__main__':
     a_count = WindMonitor(10, 17)
     while True:
         execute(a_count)
+    a_count.reset()
