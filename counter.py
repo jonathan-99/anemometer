@@ -6,7 +6,7 @@ Additional component plots graphs based on logged sensor values.
 
 How long we want to wait between loops (seconds) - one hour.
 3660 = 1 hour
-3420 = 57 minutes. Do this due to starting on reboot and initiating through crontab on the hour.
+3420 = 57 minutes. Do this due to initiating through crontab on the hour which might be out.
 """
 
 try:
@@ -16,20 +16,49 @@ try:
     import RPi.GPIO as GPIO
     import functions
     import time
-except ImportError as e:
-    sys.exit("Importing error: " + str(e))
+    import logging
+    from functools import partial
+except Exception as e:
+    print("importing error: ", e)
 
-class wind_tick():
-    global count
+# formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
+#                                  datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(asctime)s , %(levelname)s , %(message)s")
 
-    def __init__(self):
+
+class WindMonitor:
+    coreDataFilePath = "Use a configuration or variable"
+
+
+    def __init__(self, intervalNumber: int, pinNumber: int) -> None:
+        self.PIN = pinNumber
+        self.interval = intervalNumber
+        logging.debug('Initiating the weather monitor')
         self.count = 0
 
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.PIN, GPIO.BOTH)
+        trying_something = partial(self.add_count)
+        GPIO.add_event_callback(self.PIN, trying_something)
+        logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
+
     def add_count(self):
-        self.count = self.count + 1
+        self.count += 1
+        logging.debug('Adding a tick: ' + str(self.show_count()))
+
 
     def show_count(self):
         return self.count
+
+
+    def get_interval(self):
+        return self.interval
+
+
+    def reset(self):
+        self.count = 0
+
 
 def calculate_speed(input_info: int, spare: int) -> float:
     """
@@ -38,45 +67,22 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
+    logging.debug("I am in calculating speed number: " + str(input_info))
     return (input_info*1.2) / spare
 
 
-def wind_trig(self) -> None:
-    a_count.add_count()
-
-
-def setup() -> None:
-    """
-    Initiate all PINs etc.
-    :return -> None:
-    """
-    global coreDataFilePath
-    coreDataFilePath = "Use a configuration or variable"
-    global interval
-    interval = 3420
-
-    # Set GPIO pins to use BCM pin numbers
-    GPIO.setmode(GPIO.BCM)
-
-    # Set digital pin 17 to an input and enable the pull-up
-    GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-    # Event to detect wind (4 ticks per revolution)
-    GPIO.add_event_detect(17, GPIO.BOTH)
-    GPIO.add_event_callback(17, wind_trig)
-
-
-def execute() -> None:
-    time.sleep(interval)
-    speed = calculate_speed(wind_tick.show_count(), interval)
+def execute(windObject) -> None:
+    logging.debug('Ticks first count: ' + str(windObject.show_count()))
+    time.sleep(windObject.get_interval())
+    speed = calculate_speed(windObject.show_count(), windObject.get_interval())
+    logging.debug("Ticks second count: " + str(windObject.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
-    a_count = wind_tick()
-
     print("This is the speed: ", speed)
 
 
 if __name__ == '__main__':
-    a_count = wind_tick()
-    setup()
+    # interval = 3420
+    a_count = WindMonitor(10, 17)
     while True:
-        execute()
+        execute(a_count)
+    a_count.reset()

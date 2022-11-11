@@ -6,6 +6,7 @@ try:
     import matplotlib
     import numpy as np
     import functions
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -17,7 +18,8 @@ def basic_plot(input_list):
     """
     This functions takes dates (and hours) and plots them on a basic x-y chart.
     """
-
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("basic_plot")
     # even to x, odd to y
     dates, y_values = functions.reformat_data(input_list)
 

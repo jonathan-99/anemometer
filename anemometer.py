@@ -6,6 +6,7 @@ try:
     import argparse
     import Capture
     import basic_plotting
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -14,6 +15,8 @@ def main_function() -> int:
     """
     This is the main function which holds all arguments to effectively control the anemometer.
     """
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("main function fro anemometer.py")
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-c", "--capture", help="run the capture")

@@ -24,6 +24,8 @@ while read -r p ; do sudo "$p" -y ; done < <(cat << "EOF"
 EOF
 )
 
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0
+
 echo installing the nice-to-have pre-requisites
 echo you have 5 seconds to proceed ...
 echo or

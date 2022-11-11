@@ -8,6 +8,7 @@ try:
     import csv
     import matplotlib.pyplot as plt
     import numpy as np
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -16,6 +17,8 @@ def create_html_page_wrapper(name: str) -> str:
     Need the start and end of a html page.
     :return 2 x str:
     """
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("create_html_page_wrapper")
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
     end_tags = "</body></html>"
@@ -53,6 +56,9 @@ def list_file_directory(directory="data/") -> list:
     :param directory: str
     :return: list
     """
+
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("list_file_directory")
     list_of_files = []
     for path in os.listdir(directory):
         # check if current path is a file
@@ -77,18 +83,22 @@ def file_handler(input_data) -> None:
     :param input_data:
     :return None: # should this be a boolean for success / failure?
     """
+
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.debug("file_handler")
     try:
         # file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
         # time_stamp = str(datetime.datetime.now())
         # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
         # file_object.close()
         temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
-        print("Opening file, ", temp_filename)
+        logging.debug("Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now())
             fileObject.write(f"{time_stamp},{input_data},\n")
+            logging.debug("File added to in file_handler()")
     except Exception as err:
-        print("Problem: ", err)
+        logging.error("Exception error in file_handler()", exc_info=True)
     return
 
 
@@ -98,11 +108,14 @@ def open_file(filename):
     :param filename:
     :return Error as string:
     """
+
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.debug("opening file with read-only")
     output = ""
     try:
         output = open(filename, "r")
     except Exception as err:
-        print("error opening file: ", err)
+        logging.error("Exception error in open_file()", exc_info=True)
     if output is not None:
         pass
     else:
@@ -146,6 +159,9 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
     :return: list -> WeatherData(datetime, str)
     """
+
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("reformat_data for plotting")
     local_x = []
     local_y = []
     output = []

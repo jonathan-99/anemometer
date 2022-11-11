@@ -6,6 +6,7 @@ try:
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import functions
+    import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -15,6 +16,9 @@ def generate_html_page() -> None:
     This gets a list of file names and creates a small html page with those names
     :return:
     """
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("simple browser generate_html_page()")
+
     alist = functions.list_file_directory()
     blist = functions.row_major(alist, len(alist))
     clist = functions.html_table(blist)
@@ -26,8 +30,9 @@ def generate_html_page() -> None:
     try:
         with open("table.html", "w") as fileObject:
             fileObject.write(page)
-    except FileExistsError:
+    except FileExistsError as e:
         print("<html><body><h1>" + "File Error" + "</h1></body></html>")
+        logging.error("File Exists Error in generate_html_page()", exc_info=True)
 
 
 class WebServer(BaseHTTPRequestHandler):
@@ -44,6 +49,7 @@ class WebServer(BaseHTTPRequestHandler):
         except FileNotFoundError as err:
             file_to_open = str(err)
             self.send_response(404)
+            logging.error("File Not Found Error - in serve_page()", exc_info=True)
         self.end_headers()
         self.wfile.write(bytes(file_to_open, "utf-8"))
 
@@ -59,9 +65,12 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 def setup() -> None:
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.info("simple browser setup()")
     server = HTTPServer(('localhost', 7000), WebServer)
     server.serve_forever()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename="/logging/log.txt")
     setup()
