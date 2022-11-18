@@ -31,7 +31,7 @@ class WindMonitor:
     global count
 
     def __init__(self, interval_number: int, pin_number: int) -> None:
-        self.PIN = str(pin_number)
+        self.PIN = pin_number
         self.interval = interval_number
         logging.debug('Initiating the weather monitor')
         global count
