@@ -14,12 +14,12 @@ default_file_name = "testing/test_data_from_counter.csv"
 # can I remove this global variable?
 
 
-def basic_plot(input_list):
+def basic_plot(input_list, save=False) -> None:
     """
     This functions takes dates (and hours) and plots them on a basic x-y chart.
     """
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("basic_plot")
+    logging.debug("basic_plot" + str(input_list) + "saving? " + str(save))
     # even to x, odd to y
     dates, y_values = functions.reformat_data(input_list)
 
@@ -32,8 +32,23 @@ def basic_plot(input_list):
 
     # plt.title("Basic Plot in ", matplotlib.__version__)
     plt.show()
+    if save:
+        plt.savefig('default_plot.png')
+        logging.debug('Saved default_plot.png')
+    else:
+        pass
+    return
+
+
+def create_plot() -> None:
+    logging.basicConfig(filename="/logging/log.txt")
+    logging.debug("Within create plot for png creation.")
+    disregard_list_of_files_in_directory, file_name = functions.list_file_directory()
+    local_list = functions.read_in_data(file_name)
+    basic_plot(local_list, True)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename="/logging/log.txt")
     alist = functions.read_in_data(default_file_name)
     basic_plot(alist)

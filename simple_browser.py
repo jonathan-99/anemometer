@@ -6,6 +6,7 @@ try:
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import functions
+    import basic_plotting as basic_plot
     import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -50,7 +51,6 @@ class WebServer(BaseHTTPRequestHandler):
 
     def do_GET(self) -> bool:
         generate_html_page("table")
-        generate_html_page("latest_day_plot")
         if self.path == "/":
             self.serve_page("/index.html")
             logging.debug("Served main index.html page")
@@ -65,6 +65,8 @@ class WebServer(BaseHTTPRequestHandler):
 
 def setup() -> None:
     logging.basicConfig(filename="/logging/log.txt")
+    # plot of newest data
+    basic_plot.create_plot()
     server = HTTPServer(('localhost', 7000), WebServer)
     status = "Serving on: " + str(server.server_name) \
         + " addr: " \
