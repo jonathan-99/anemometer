@@ -11,34 +11,29 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def generate_html_page() -> None:
+def generate_html_page(name_of_page: str) -> None:
     """
     This gets a list of file names and creates a small html page with those names
     :return:
     """
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("simple browser generate_html_page()")
+    logging.debug("simple browser generate_html_page() with page " + name_of_page)
 
-    alist = functions.list_file_directory()
-    blist = functions.row_major(alist, len(alist))
-    clist = functions.html_table(blist)
-    c = ""
-    for cl in clist:
-        c += cl
-    start, end = functions.create_html_page_wrapper("table")
-    page = start + c + end
+    page = functions.listing_directory(name_of_page)
     try:
-        with open("table.html", "w") as fileObject:
+        with open(name_of_page + ".html", "w") as fileObject:
             fileObject.write(page)
     except FileExistsError as e:
         print("<html><body><h1>" + "File Error" + "</h1></body></html>")
         logging.error("File Exists Error in generate_html_page()", exc_info=True)
+    return
 
 
 class WebServer(BaseHTTPRequestHandler):
     """
     This is a basic server class for serving a html file.
     """
+    logging.debug("Within WebServer Class")
 
     def serve_page(self, page: str):
         self.path = page
@@ -54,20 +49,24 @@ class WebServer(BaseHTTPRequestHandler):
         self.wfile.write(bytes(file_to_open, "utf-8"))
 
     def do_GET(self) -> bool:
-        generate_html_page()
+        generate_html_page("table")
+        generate_html_page("latest_day_plot")
         if self.path == "/":
             self.serve_page("/index.html")
+            logging.debug("Served main index.html page")
             return True
         else:
             self.serve_page("/table.html")  # this needs to change for other options.
+            self.serve_page("/latest_day_plot.html")
             self.send_response(303, "this is not where you want to be.")
+            logging.debug("Served table.html page.")
             return False
 
 
 def setup() -> None:
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("simple browser setup()")
     server = HTTPServer(('localhost', 7000), WebServer)
+    logging.debug("simple browser setup()" + str(server.server_port))
     server.serve_forever()
 
 
