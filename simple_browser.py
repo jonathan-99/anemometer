@@ -66,7 +66,13 @@ class WebServer(BaseHTTPRequestHandler):
 def setup() -> None:
     logging.basicConfig(filename="/logging/log.txt")
     server = HTTPServer(('localhost', 7000), WebServer)
-    logging.debug("simple browser setup()" + str(server.server_port))
+    status = "Serving on: " + str(server.server_name) \
+        + " addr: " \
+        + str(server.server_address) \
+        + " port: " \
+        + str(server.server_port)
+    print(status)
+    logging.debug(status)
     server.serve_forever()
 
 
