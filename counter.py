@@ -31,7 +31,7 @@ class WindMonitor:
     global count
 
     def __init__(self, interval_number: int, pin_number: int) -> None:
-        self.PIN = str(pin_number)
+        self.PIN = pin_number
         self.interval = interval_number
         logging.debug('Initiating the weather monitor')
         global count
@@ -52,13 +52,15 @@ class WindMonitor:
         logging.debug('Adding a tick: ' + str(count))
 
     def show_count(self):
-        return self.count
+        global count
+        return count
 
     def get_interval(self):
         return self.interval
 
     def reset(self):
-        self.count = 0
+        global count
+        count = 0
 
 
 def calculate_speed(input_info: int, spare: int) -> float:
