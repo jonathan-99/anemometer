@@ -6,11 +6,21 @@ try:
     import os
     import sys
     import csv
-    import matplotlib.pyplot as plt
     import numpy as np
     import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
+
+def listing_directory(page_name: str) -> str:
+    alist, name_newest_file = list_file_directory()
+    blist = row_major(alist, len(alist))
+    clist = html_table(blist)
+    c = ""
+    for cl in clist:
+        c += cl
+    start, end = create_html_page_wrapper(page_name)
+    return start + c + end
+
 
 def create_html_page_wrapper(name: str) -> str:
     """
@@ -18,7 +28,7 @@ def create_html_page_wrapper(name: str) -> str:
     :return 2 x str:
     """
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("create_html_page_wrapper")
+    logging.debug("create_html_page_wrapper with " + name)
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
     end_tags = "</body></html>"
@@ -49,6 +59,16 @@ def html_table(input_value) -> list:
     return output
 
 
+def get_newest_file(input_list: list) -> str:
+    today_date = str(datetime.datetime.today())[0:10] + ".txt"
+    for value in range(1, 30):
+        check_day = datetime.datetime.now() - datetime.timedelta(value)
+        if (str(check_day)[0:10]+".txt") in input_list: output_date = str(check_day)[0:10]+".txt"
+        else:
+            logging.debug("Need to go back further in get_newest_file() to find newest file")
+    return output_date
+
+
 def list_file_directory(directory="data/") -> list:
     """
     Search through 'data' folder for all names of files and return them in a string. This will enable
@@ -58,13 +78,14 @@ def list_file_directory(directory="data/") -> list:
     """
 
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("list_file_directory")
+    logging.debug("list_file_directory")
     list_of_files = []
     for path in os.listdir(directory):
         # check if current path is a file
         if os.path.isfile(os.path.join(directory, path)):
             list_of_files.append(path)
-    return list_of_files
+    output_file_name = get_newest_file(list_of_files)
+    return list_of_files, output_file_name
 
 
 def get_yesterdays_date() -> str:
@@ -73,7 +94,7 @@ def get_yesterdays_date() -> str:
     :return String:
     """
     yesterday = datetime.datetime.now() - datetime.timedelta(1)
-    print("Yesterday is: ", str(yesterday)[0:10])
+    logging.debug(("Yesterday is: " + str(yesterday)[0:10]))
     return str(yesterday)[0:10]
 
 
@@ -178,3 +199,6 @@ def reformat_data(input_list: list):  # how to declare two list returns?
                 local_y.append(str(g))
         # output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
     return local_x, local_y
+
+
+
