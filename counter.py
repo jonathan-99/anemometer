@@ -43,8 +43,11 @@ class WindMonitor:
         GPIO.add_event_callback(self.PIN, self.add_count)
         logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
-    @staticmethod
-    def add_count():
+    def add_count(*args) -> None:
+        """
+        The callback function passes the PIN number to add_count. It won't work without doing this, but the add_count doesn't need the number at this time.
+        """
+        global count
         count += 1
         logging.debug('Adding a tick: ' + str(count))
 
