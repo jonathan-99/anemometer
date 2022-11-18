@@ -52,13 +52,15 @@ class WindMonitor:
         logging.debug('Adding a tick: ' + str(count))
 
     def show_count(self):
-        return self.count
+        global count
+        return count
 
     def get_interval(self):
         return self.interval
 
     def reset(self):
-        self.count = 0
+        global count
+        count = 0
 
 
 def calculate_speed(input_info: int, spare: int) -> float:
