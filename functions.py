@@ -61,12 +61,16 @@ def html_table(input_value) -> list:
 
 def get_newest_file(input_list: list) -> str:
     today_date = str(datetime.datetime.today())[0:10] + ".txt"
-    for value in range(1, 30):
+    output_date = ""
+    for value in range(-1, 30, 1):
         check_day = datetime.datetime.now() - datetime.timedelta(value)
-        if (str(check_day)[0:10]+".txt") in input_list: output_date = str(check_day)[0:10]+".txt"
+        test_day = str(check_day)[0:10]+".txt"
+        if test_day in input_list:
+            output_date = test_day
+            return output_date
         else:
             logging.debug("Need to go back further in get_newest_file() to find newest file")
-    return output_date
+    return "No file found"
 
 
 def list_file_directory(directory="data/") -> list:
@@ -78,13 +82,14 @@ def list_file_directory(directory="data/") -> list:
     """
 
     logging.basicConfig(filename="/logging/log.txt")
-    logging.debug("list_file_directory")
+    logging.debug("list_file_directory from directory: " + str(directory))
     list_of_files = []
     for path in os.listdir(directory):
         # check if current path is a file
         if os.path.isfile(os.path.join(directory, path)):
             list_of_files.append(path)
     output_file_name = get_newest_file(list_of_files)
+    logging.debug("Most recent file name: " + str(output_file_name))
     return list_of_files, output_file_name
 
 
@@ -123,7 +128,7 @@ def file_handler(input_data) -> None:
     return
 
 
-def open_file(filename):
+def open_file(filename: str, default_path="data/"):
     """
     Find and open a file to read data from it.
     :param filename:
@@ -134,7 +139,7 @@ def open_file(filename):
     logging.debug("opening file with read-only")
     output = ""
     try:
-        output = open(filename, "r")
+        output = open(default_path + filename, "r")
     except Exception as err:
         logging.error("Exception error in open_file()", exc_info=True)
     if output is not None:
@@ -166,12 +171,16 @@ def read_in_data(filename: str) -> list:
     """
     Read in data from csv file.
     """
+    logging.debug("Read_in_data from " + filename)
     output = []
-    file = open_file(filename)
-    reader = csv.reader(file)
-    for each_row in reader:
-        output.append(each_row)
-    file.close()
+    try:
+        file = open_file(filename)
+        reader = csv.reader(file)
+        for each_row in reader:
+            output.append(each_row)
+        file.close()
+    except Exception as e:
+        logging.debug("Reading in csv data error: " + str(e))
     return output
 
 
