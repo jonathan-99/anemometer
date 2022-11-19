@@ -8,8 +8,10 @@ try:
     import csv
     import numpy as np
     import logging
+    from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
+
 
 def listing_directory(page_name: str) -> str:
     alist, name_newest_file = list_file_directory()
@@ -22,7 +24,7 @@ def listing_directory(page_name: str) -> str:
     return start + c + end
 
 
-def create_html_page_wrapper(name: str) -> str:
+def create_html_page_wrapper(name: str) -> tuple:
     """
     Need the start and end of a html page.
     :return 2 x str:
@@ -34,6 +36,7 @@ def create_html_page_wrapper(name: str) -> str:
     end_tags = "</body></html>"
     return title, end_tags
 
+
 def row_major(alist, sublen) -> list:
     """
     NOt quite sure of this yet!
@@ -43,14 +46,14 @@ def row_major(alist, sublen) -> list:
     """
     return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
 
+
 def html_table(input_value) -> list:
     """
     This function takes values and places them in a html list
     :param input_value:
     :return list:
     """
-    output = []
-    output.append('<table>')
+    output = ['<table>']
     for sublist in input_value:
         output.append('<tr><td>')
         output.append('</td><td>'.join(sublist))
@@ -60,8 +63,6 @@ def html_table(input_value) -> list:
 
 
 def get_newest_file(input_list: list) -> str:
-    today_date = str(datetime.datetime.today())[0:10] + ".txt"
-    output_date = ""
     for value in range(-1, 30, 1):
         check_day = datetime.datetime.now() - datetime.timedelta(value)
         test_day = str(check_day)[0:10]+".txt"
@@ -73,7 +74,7 @@ def get_newest_file(input_list: list) -> str:
     return "No file found"
 
 
-def list_file_directory(directory="data/") -> list:
+def list_file_directory(directory="data/") -> tuple:
     """
     Search through 'data' folder for all names of files and return them in a string. This will enable
     the index.html file to list them safely for a browser.
@@ -90,7 +91,8 @@ def list_file_directory(directory="data/") -> list:
             list_of_files.append(path)
     output_file_name = get_newest_file(list_of_files)
     logging.debug("Most recent file name: " + str(output_file_name))
-    return list_of_files, output_file_name
+    output_tuple = namedtuple("Directory", ["list_of_files", "output_file_name"])
+    return output_tuple(list_of_files, output_file_name)
 
 
 def get_yesterdays_date() -> str:
@@ -113,17 +115,13 @@ def file_handler(input_data) -> None:
     logging.basicConfig(filename="/logging/log.txt")
     logging.debug("file_handler")
     try:
-        # file_object = open("/data/" + str(datetime.datetime.today())[0:10] + ".txt", 'a')
-        # time_stamp = str(datetime.datetime.now())
-        # file_object.write(time_stamp[0:16] + "," + str(input_data) + ",\n")
-        # file_object.close()
         temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
         logging.debug("Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now())
             fileObject.write(f"{time_stamp},{input_data},\n")
             logging.debug("File added to in file_handler()")
-    except Exception as err:
+    except FileExistsError or FileNotFoundError as err:
         logging.error("Exception error in file_handler()", exc_info=True)
     return
 
@@ -191,11 +189,12 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     """
 
     logging.basicConfig(filename="/logging/log.txt")
-    logging.info("reformat_data for plotting")
+    logging.debug("reformat_data for plotting")
     local_x = []
     local_y = []
     output = []
 
+    logging.debug("input list " + str(input_list))
     for gl in input_list:
         for counter, g in enumerate(gl):
             if counter % 2 == 0:
