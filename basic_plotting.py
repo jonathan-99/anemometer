@@ -7,6 +7,7 @@ try:
     import numpy as np
     import functions
     import logging
+    from class_file import config_data
     from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -19,8 +20,10 @@ def basic_plot(input_list, save=False) -> None:
     """
     This functions takes dates (and hours) and plots them on a basic x-y chart.
     """
-    logging.basicConfig(filename="logging/log.txt")
+    config_class = functions.get_config()
+    logging.basicConfig(filename=config_class.get_logging_location())
     logging.debug("basic_plot" + str(input_list) + "saving? " + str(save))
+
     # even to x, odd to y
     dates, y_values = functions.reformat_data(input_list)
     print("dates: ", dates, " : y_values: ", y_values)
@@ -49,8 +52,10 @@ def basic_plot(input_list, save=False) -> None:
 
 
 def create_plot() -> None:
-    logging.basicConfig(filename="logging/log.txt")
+    config_class = functions.get_config()
+    logging.basicConfig(filename=config_class.get_logging_location())
     logging.debug("Within create plot for png creation.")
+
     # list_file_directory returns a tuple.
     value = functions.list_file_directory()
     local_list = functions.read_in_data(value[1])
@@ -58,6 +63,8 @@ def create_plot() -> None:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename="/logging/log.txt")
+    config = functions.get_config()
+    logging.basicConfig(filename=config.get_logging_location())
+
     alist = functions.read_in_data(default_file_name)
     basic_plot(alist)

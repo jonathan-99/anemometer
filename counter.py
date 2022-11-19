@@ -17,17 +17,19 @@ try:
     import functions
     import time
     import logging
+    from class_file import config_data
     from functools import partial
 except Exception as e:
     print("importing error: ", e)
 
 # formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
 #                                  datefmt='%Y-%m-%d , %H:%M:%S')
-logging.basicConfig(filename="logging/log.txt", level=logging.DEBUG, format="%(asctime)s , %(levelname)s , %(message)s")
 
 
 class WindMonitor:
-    coreDataFilePath = "Use a configuration or variable"
+    config = functions.get_config()
+    logging.basicConfig(filename=config.get_logging_location())
+
     global count
 
     def __init__(self, interval_number: int, pin_number: int) -> None:
@@ -70,22 +72,34 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
+    config = functions.get_config()
+    logging.basicConfig(filename=config.get_logging_location())
     logging.debug("I am in calculating speed number: " + str(input_info))
+
     return (input_info*1.2) / spare
 
 
 def execute(wind_object) -> None:
+    """
+    This function executes until either user interuption or until the interval in seconds completes.
+    """
+    config = functions.get_config()
+    logging.basicConfig(filename=config.get_logging_location())
     logging.debug('Ticks first count: ' + str(wind_object.show_count()))
+
     time.sleep(wind_object.get_interval())
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
     logging.debug("Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
-    print("This is the speed: ", speed)
+    logging.debug("For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
 
 
 if __name__ == '__main__':
+    config = functions.get_config()
+    logging.basicConfig(filename=config.get_logging_location())
+
     # interval = 3420
-    a_count = WindMonitor(10, 17)
+    a_count = WindMonitor(4320, 17)
     while True:
         execute(a_count)
