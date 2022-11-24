@@ -15,7 +15,7 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def get_config(self, location="opt/anemometer/config.json", type_of_file="json") -> config_data:
+def get_config(self, location="/opt/anemometer/config.json", type_of_file="json") -> config_data:
     """
     Get the config from a json file and return an object class of that data.
     """
