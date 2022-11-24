@@ -7,7 +7,8 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-class config_data():
+
+class config_data:
     """
     This holds and retrieves the config file for all other files to call on.
     """
@@ -33,7 +34,7 @@ class config_data():
         return self.data_location
 
     def get_server_port(self) -> int:
-        return self.server_port
+        return int(self.server_port)
 
     def show_all(self) -> str:
         output_string = str(self.logging_location) \
