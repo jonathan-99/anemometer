@@ -28,7 +28,7 @@ except Exception as e:
 
 class WindMonitor:
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     global count
 
@@ -47,7 +47,8 @@ class WindMonitor:
 
     def add_count(*args) -> None:
         """
-        The callback function passes the PIN number to add_count. It won't work without doing this, but the add_count doesn't need the number at this time.
+        The callback function passes the PIN number to add_count.
+        It won't work without doing this, but the add_count doesn't need the number at this time.
         """
         global count
         count += 1
@@ -73,7 +74,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :return: speed: float
     """
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("I am in calculating speed number: " + str(input_info))
 
     return (input_info*1.2) / spare
@@ -84,7 +85,7 @@ def execute(wind_object) -> None:
     This function executes until either user interuption or until the interval in seconds completes.
     """
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug('Ticks first count: ' + str(wind_object.show_count()))
 
     time.sleep(wind_object.get_interval())
@@ -97,7 +98,7 @@ def execute(wind_object) -> None:
 
 if __name__ == '__main__':
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     # interval = 3420
     a_count = WindMonitor(4320, 17)

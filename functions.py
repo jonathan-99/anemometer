@@ -28,6 +28,7 @@ def get_config(self, location="/opt/anemometer/config.json", type_of_file="json"
             config_data_object.set_logging_location(data["logging"])
             config_data_object.set_data_location(data["data"])
             config_data_object.set_server_port(data["simple-server-port"])
+            config_data_object.set_logging_level(["logging-level"])
         except FileExistsError or FileExistsError as err:
             logging.error("Getting config error: " + str(err))
     else:
@@ -35,6 +36,7 @@ def get_config(self, location="/opt/anemometer/config.json", type_of_file="json"
         config_data_object.set_logging_location()
         config_data_object.set_data_location()
         config_data_object.set_server_port()
+        config_data_object.set_logging_level()
     logging.debug("We found these configs: " + str(config_data_object.show_all()))
     return config_data_object
 
@@ -42,7 +44,7 @@ def get_config(self, location="/opt/anemometer/config.json", type_of_file="json"
 def listing_directory(page_name: str) -> str:
     """This lists all files in a specified directory, then outputs it as a string of html tags, ready for rendering."""
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     alist, name_newest_file = list_file_directory()
     blist = row_major(alist, len(alist))
     clist = html_table(blist)
@@ -56,10 +58,10 @@ def listing_directory(page_name: str) -> str:
 def create_html_page_wrapper(name: str) -> tuple:
     """
     Need the start and end of a html page.
-    :return 2 x str:
+    :return: str, str
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("create_html_page_wrapper with " + name)
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
@@ -67,14 +69,14 @@ def create_html_page_wrapper(name: str) -> tuple:
     return title, end_tags
 
 
-def row_major(alist, sublen) -> list:
+def row_major(alist, SubLen) -> list:
     """
-    Not quite sure of this yet!
-    :param alist:
-    :param sublen:
+    Not quite sure of this yet
+    :param alist: list
+    :param SubLen: int
     :return:
     """
-    return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
+    return [alist[i:i+SubLen] for i in range(0, len(alist), SubLen)]
 
 
 def html_table(input_value) -> list:
@@ -84,7 +86,7 @@ def html_table(input_value) -> list:
     :return list:
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     output = ['<table>']
     for sublist in input_value:
@@ -97,7 +99,7 @@ def html_table(input_value) -> list:
 
 def get_newest_file(input_list: list) -> str:
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     for value in range(-1, 30, 1):
         check_day = datetime.datetime.now() - datetime.timedelta(value)
@@ -114,12 +116,12 @@ def get_newest_file(input_list: list) -> str:
 def list_file_directory(directory="data/") -> tuple:
     """
     Search through 'data' folder for all names of files and return them in a string. This will enable
-    the index.html file to list them safely for a browser.
+    the index.html file to list them safely for a browser
     :param directory: str
     :return: list
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("list_file_directory from directory: " + str(directory))
 
     list_of_files = []
@@ -139,7 +141,7 @@ def get_yesterdays_date() -> str:
     :return String:
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     yesterday = datetime.datetime.now() - datetime.timedelta(1)
     logging.debug(("Yesterday is: " + str(yesterday)[0:10]))
@@ -153,7 +155,7 @@ def file_handler(input_data) -> None:
     :return None: # should this be a boolean for success / failure?
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("file_handler")
 
     try:
@@ -164,7 +166,7 @@ def file_handler(input_data) -> None:
             fileObject.write(f"{time_stamp},{input_data},\n")
             logging.debug("File added to in file_handler()")
     except FileExistsError or FileNotFoundError as err:
-        logging.error("Exception error in file_handler()", exc_info=True)
+        logging.error("Exception error in file_handler()" + str(err), exc_info=True)
     return
 
 
@@ -175,14 +177,14 @@ def open_file(filename: str, default_path="data/"):
     :return Error as string:
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("opening file with read-only")
 
     output = ""
     try:
         output = open(default_path + filename, "r")
     except Exception as err:
-        logging.error("Exception error in open_file()", exc_info=True)
+        logging.error("Exception error in open_file()" + str(err), exc_info=True)
     if output is not None:
         pass
     else:
@@ -193,12 +195,12 @@ def open_file(filename: str, default_path="data/"):
 def sort_dates(input_list) -> list:
     """
     Sort the dates of a list from string to YY MM DD HH.
-    Need to check format of the data as it returns integers?
+    Need to check format of the data as it returns integers
     :param input_list:
     :return list:
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
 
     print("input list: ", input_list)
     date_output_list = []
@@ -217,7 +219,7 @@ def read_in_data(filename: str) -> list:
     Read in data from csv file.
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("Read_in_data from " + filename)
 
     output = []
@@ -238,12 +240,11 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     :return: list -> WeatherData(datetime, str)
     """
     config = get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
     logging.debug("reformat_data for plotting")
 
     local_x = []
     local_y = []
-    output = []
 
     logging.debug("input list " + str(input_list))
     for gl in input_list:
@@ -256,10 +257,7 @@ def reformat_data(input_list: list):  # how to declare two list returns?
                 # print("stuff: {}, {}, {}, hour {}".format(t[0:2], t[3:5], t[6:8], t[9:11]))
             else:
                 local_y.append(str(g))
-        # output = sort_dates(local_x) # this takes a string yymmdd and returns a datetime format.
+        # output = sort_dates(local_x) # this takes a string YYMMDD and returns a datetime format.
     logging.debug("X axis values: " + str(local_x))
     logging.debug("Y axis values: " + str(local_y))
     return local_x, local_y
-
-
-
