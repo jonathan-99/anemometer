@@ -1,5 +1,6 @@
 {
-  "logging": "opt/anemometer/logging/log.txt",
-  "data": "opt/anemometer/data",
-  "simple-server-port": "6000"
+  "logging": "/opt/anemometer/logging/debugging.log",
+  "data": "/opt/anemometer/data",
+  "simple-server-port": "6000",
+  "logging-level": "logging.DEBUG"
 }

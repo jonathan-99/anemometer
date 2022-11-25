@@ -7,7 +7,8 @@ try:
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-class config_data():
+
+class config_data:
     """
     This holds and retrieves the config file for all other files to call on.
     """
@@ -16,6 +17,7 @@ class config_data():
         self.logging_location = ""
         self.data_location = ""
         self.server_port = ""
+        self.logging_level = ""
 
     def set_logging_location(self, location="opt/anemometer/logging/log.txt") -> None:
         self.logging_location = location
@@ -26,6 +28,9 @@ class config_data():
     def set_server_port(self, number=6000) -> None:
         self.server_port = number
 
+    def set_logging_level(self, log_level="logging.DEBUG") -> None:
+        self.logging_level = log_level
+
     def get_logging_location(self) -> str:
         return self.logging_location
 
@@ -33,10 +38,14 @@ class config_data():
         return self.data_location
 
     def get_server_port(self) -> int:
-        return self.server_port
+        return int(self.server_port)
+
+    def get_logging_level(self) -> str:
+        return self.logging_level
 
     def show_all(self) -> str:
         output_string = str(self.logging_location) \
             + str(self.data_location) \
-            + str(self.server_port)
+            + str(self.server_port) \
+            + str(self.logging_level)
         return output_string
