@@ -28,6 +28,7 @@ def get_config(self, location="/opt/anemometer/config.json", type_of_file="json"
             config_data_object.set_logging_location(data["logging"])
             config_data_object.set_data_location(data["data"])
             config_data_object.set_server_port(data["simple-server-port"])
+            config_data_object.set_logging_level(["logging-level"])
         except FileExistsError or FileExistsError as err:
             logging.error("Getting config error: " + str(err))
     else:
@@ -35,6 +36,7 @@ def get_config(self, location="/opt/anemometer/config.json", type_of_file="json"
         config_data_object.set_logging_location()
         config_data_object.set_data_location()
         config_data_object.set_server_port()
+        config_data_object.set_logging_level()
     logging.debug("We found these configs: " + str(config_data_object.show_all()))
     return config_data_object
 
