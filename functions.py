@@ -161,7 +161,7 @@ def file_handler(input_data) -> None:
     logging.debug("file_handler")
 
     try:
-        temp_filename = "data/" + str(datetime.datetime.today())[0:10] + ".txt"
+        temp_filename = str(config.get_path()) + str(datetime.datetime.today())[0:10] + ".txt"
         logging.debug("Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now())
