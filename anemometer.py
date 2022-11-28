@@ -19,14 +19,14 @@ def main_function() -> int:
     This is the main function which holds all arguments to effectively control the anemometer.
     """
     config_class = functions.get_config()
-    logging.basicConfig(filename=config_class.get_logging_location())
+    logging.basicConfig(filename=str(config_class.get_path()) + config_class.get_logging_location())
     logging.debug("main function fro anemometer.py")
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--capture", help="run the capture")
     parser.add_argument("-p", "--plot", type=str,
-                        default="testing/test_data_from_counter.csv",
-                        const="testing/test_data_from_counter.csv",
+                        default=str(config_class.get_path()) + "testing/test_data_from_counter.csv",
+                        const=str(config_class.get_path()) + "testing/test_data_from_counter.csv",
                         nargs='?',
                         dest="input_a",
                         help="do a basic plot of data held")

@@ -28,7 +28,7 @@ except Exception as e:
 
 class WindMonitor:
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
+    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
 
     global count
 
@@ -74,7 +74,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :return: speed: float
     """
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
+    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
     logging.debug("I am in calculating speed number: " + str(input_info))
 
     return (input_info*1.2) / spare
@@ -85,7 +85,7 @@ def execute(wind_object) -> None:
     This function executes until either user interuption or until the interval in seconds completes.
     """
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
+    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
     logging.debug('Ticks first count: ' + str(wind_object.show_count()))
 
     time.sleep(wind_object.get_interval())
@@ -98,7 +98,7 @@ def execute(wind_object) -> None:
 
 if __name__ == '__main__':
     config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location(), level=config.get_logging_level())
+    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
 
     # interval = 3420
     a_count = WindMonitor(4320, 17)
