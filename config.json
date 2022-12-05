@@ -1,7 +1,7 @@
 {
-  "path": "~/opt/anemometer/",
-  "logging": "/logging/debugging.log",
-  "data": "/anemometer/data",
+  "path": "opt/anemometer/",
+  "logging": "logging/debugging.log",
+  "data": "anemometer/data",
   "simple-server-port": "6000",
   "logging-level": "logging.DEBUG"
 }
