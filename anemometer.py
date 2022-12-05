@@ -33,6 +33,7 @@ def main_function() -> int:
     parser.add_argument("-C", "--Counter", interval="3420", pin="17", help="run the counter")
     parser.add_argument("-P", "--pin", default="17", help="run the counter")
     parser.add_argument("-i", "--interval", default="3420", help="run the counter")
+    parser.add_argument("--crontab", default="00", help="run the counter on a schedule like crontab")
     args = parser.parse_args()
 
     if args.capture:
@@ -46,6 +47,8 @@ def main_function() -> int:
         b_count = counter.WindMonitor(args.interval, args.pin)
         while True:
             counter.execute(b_count)
+    elif args.crontab:
+        functions.crontab_method(str(args.crontab))
     else:
         print("you need to select an option, try -h for help.")
     return 0
