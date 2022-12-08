@@ -28,6 +28,8 @@ except Exception as e:
 
 class WindMonitor:
     config = functions.get_config()
+    print("(Class) Config capture path: ", config.get_path())
+    print("(class) Config log location: ", config.get_logging_location())
     logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
 
     global count
@@ -85,6 +87,8 @@ def execute(wind_object) -> None:
     This function executes until either user interuption or until the interval in seconds completes.
     """
     config = functions.get_config()
+    print("(Execute) Config capture path: ", config.get_path())
+    print("(Execute) Config log location: ", config.get_logging_location())
     logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
     logging.debug('Ticks first count: ' + str(wind_object.show_count()))
 
@@ -98,6 +102,8 @@ def execute(wind_object) -> None:
 
 if __name__ == '__main__':
     config = functions.get_config()
+    print("Config capture path: ", config.get_path())
+    print("Config log location: ", config.get_logging_location())
     logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
 
     # interval = 3420
