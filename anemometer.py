@@ -48,7 +48,7 @@ def main_function() -> int:
         while True:
             counter.execute(b_count)
     elif args.crontab:
-        functions.crontab_method(str(args.crontab))
+        counter.crontab_method(str(args.crontab))
     else:
         print("you need to select an option, try -h for help.")
     return 0
