@@ -11,27 +11,17 @@ try:
     import logging
     from class_file import config_data
     from collections import namedtuple
-    import counter
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def crontab_method(number: str) -> None:
-    while True:
-        time_now = datetime.datetime.now()
-        t = time_now.strftime("%M")
-        if str(t) == number:
-            interval = 3420
-            a_wind_object = counter.WindMonitor(4320, 17)
-            while True:
-                counter.execute(a_wind_object)
-        else:
-            pass
-
-def get_config(self, location="config.json", type_of_file="json") -> config_data:
+def get_config() -> config_data:
     """
     Get the config from a json file and return an object class of that data.
     """
+    location = "config.json"
+    type_of_file = "json"
+
     config_data_object = config_data()
     print("Path debug default ", location)
     if type_of_file == "json":

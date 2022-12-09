@@ -25,10 +25,18 @@ except Exception as e:
 # formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
 #                                  datefmt='%Y-%m-%d , %H:%M:%S')
 
-config = functions.get_config()
-print("(Class) Config capture path: ", config.get_path())
-print("(class) Config log location: ", config.get_logging_location())
-logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+
+def crontab_method(number: str) -> None:
+    while True:
+        time_now = datetime.datetime.now()
+        t = time_now.strftime("%M")
+        if str(t) == number:
+            interval = 3420
+            a_wind_object = WindMonitor(4320, 17)
+            while True:
+                execute(a_wind_object)
+        else:
+            pass
 
 
 class WindMonitor:
