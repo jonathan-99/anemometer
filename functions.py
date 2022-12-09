@@ -15,10 +15,13 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def get_config(self, location="config.json", type_of_file="json") -> config_data:
+def get_config() -> config_data:
     """
     Get the config from a json file and return an object class of that data.
     """
+    location = "config.json"
+    type_of_file = "json"
+
     config_data_object = config_data()
     print("Path debug default ", location)
     if type_of_file == "json":
