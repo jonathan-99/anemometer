@@ -26,7 +26,7 @@ def get_config() -> config_data:
     print("Path debug default ", location)
     if type_of_file == "json":
         try:
-            f = open("opt/anemometer/" + location)
+            f = open("/opt/anemometer/" + location)
             data = json.load(f)
             f.close()
             config_data_object.set_path(data["path"])
