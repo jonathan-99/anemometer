@@ -22,9 +22,6 @@ try:
 except Exception as e:
     print("importing error: ", e)
 
-# formatter = logging.Formatter("%(asctime)s , %(levelname)s , %(message)s",
-#                                  datefmt='%Y-%m-%d , %H:%M:%S')
-
 
 def crontab_method(number: str) -> None:
     while True:
@@ -32,7 +29,7 @@ def crontab_method(number: str) -> None:
         t = time_now.strftime("%M")
         if str(t) == number:
             interval = 3420
-            a_wind_object = WindMonitor(4320, 17)
+            a_wind_object = WindMonitor(3420, 17)
             while True:
                 execute(a_wind_object)
         else:
@@ -45,7 +42,7 @@ class WindMonitor:
     def __init__(self, interval_number: int, pin_number: int) -> None:
         self.PIN = pin_number
         self.interval = interval_number
-        logging.debug('Initiating the weather monitor')
+        logging.debug(f'Initiating the weather monitor')
         global count
         count = 0
 
@@ -53,7 +50,7 @@ class WindMonitor:
         GPIO.setup(self.PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.add_event_detect(self.PIN, GPIO.BOTH)
         GPIO.add_event_callback(self.PIN, self.add_count)
-        logging.debug("Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
+        logging.debug(f"Set up complete. PIN=" + str(self.PIN) + " ,interval=" + str(self.interval))
 
     def add_count(*args) -> None:
         """
@@ -62,7 +59,7 @@ class WindMonitor:
         """
         global count
         count += 1
-        logging.debug('Adding a tick: ' + str(count))
+        logging.debug(f'Adding a tick: ' + str(count))
 
     def show_count(self):
         global count
@@ -85,7 +82,7 @@ def calculate_speed(input_info: int, spare: int) -> float:
     """
     config = functions.get_config()
     logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
-    logging.debug("I am in calculating speed number: " + str(input_info))
+    logging.debug(f"I am in calculating speed number: " + str(input_info))
 
     return (input_info*1.2) / spare
 
@@ -96,25 +93,26 @@ def execute(wind_object) -> None:
     """
     config = functions.get_config()
     print("(Execute) Config capture path: ", config.get_path())
-    print("(Execute) Config log location: ", config.get_logging_location())
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
-    logging.debug('Ticks first count: ' + str(wind_object.show_count()))
+    print("(Execute) Config log location: ", config.get_logging_path(), config.get_log_filename())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+    logging.debug(f'Ticks first count: ' + str(wind_object.show_count()))
 
     time.sleep(wind_object.get_interval())
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
-    logging.debug("Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
+    logging.debug(f"Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
     functions.file_handler(speed)
-    logging.debug("For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
+    logging.debug(f"For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
 
 
 if __name__ == '__main__':
     config = functions.get_config()
     print("Config capture path: ", config.get_path())
-    print("Config log location: ", config.get_logging_location())
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     # interval = 3420
-    a_count = WindMonitor(4320, 17)
+    a_count = WindMonitor(3420, 17)
     while True:
         execute(a_count)
