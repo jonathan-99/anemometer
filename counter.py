@@ -80,8 +80,8 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
-    config = functions.get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug(f"I am in calculating speed number: " + str(input_info))
 
     return (input_info*1.2) / spare

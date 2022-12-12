@@ -27,7 +27,7 @@ class config_data:
     def set_logging_path(self, log_path="logging/") -> None:
         self.logging_path = log_path
 
-    def set_logging_location(self, filename="logging/debugging.log") -> None:
+    def set_log_filename(self, filename="debugging.log") -> None:
         self.log_filename = filename
 
     def set_data_location(self, location="data/") -> None:
