@@ -30,7 +30,7 @@ class config_data:
     def set_logging_location(self, filename="logging/debugging.log") -> None:
         self.log_filename = filename
 
-    def set_data_location(self, location="/data/") -> None:
+    def set_data_location(self, location="data/") -> None:
         self.data_location = location
 
     def set_server_port(self, number=6000) -> None:
