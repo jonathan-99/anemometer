@@ -15,18 +15,22 @@ class config_data:
 
     def __init__(self):
         self.path = ""
-        self.logging_location = ""
+        self.logging_path = ""
+        self.log_filename = ""
         self.data_location = ""
         self.server_port = ""
         self.logging_level = ""
 
-    def set_path(self, path_location="~/opt/anemometer/") -> None:
+    def set_path(self, path_location="/opt/anemometer/") -> None:
         self.path = path_location
 
-    def set_logging_location(self, location="/logging/log.txt") -> None:
-        self.logging_location = location
+    def set_logging_path(self, log_path="logging/") -> None:
+        self.logging_path = log_path
 
-    def set_data_location(self, location="/data/") -> None:
+    def set_log_filename(self, filename="debugging.log") -> None:
+        self.log_filename = filename
+
+    def set_data_location(self, location="data/") -> None:
         self.data_location = location
 
     def set_server_port(self, number=6000) -> None:
@@ -38,8 +42,11 @@ class config_data:
     def get_path(self) -> str:
         return self.path
 
-    def get_logging_location(self) -> str:
-        return self.logging_location
+    def get_logging_path(self) -> str:
+        return self.logging_path
+
+    def get_log_filename(self) -> str:
+        return self.log_filename
 
     def get_data_location(self) -> str:
         return self.data_location
@@ -52,7 +59,8 @@ class config_data:
 
     def show_all(self) -> str:
         output_string = str(self.path) \
-            + str(self.logging_location) \
+            + str(self.logging_path) \
+            + str(self.log_filename) \
             + str(self.data_location) \
             + str(self.server_port) \
             + str(self.logging_level)

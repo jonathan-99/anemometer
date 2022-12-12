@@ -26,11 +26,12 @@ def get_config() -> config_data:
     print("Path debug default ", location)
     if type_of_file == "json":
         try:
-            f = open("opt/anemometer/" + location)
+            f = open("/opt/anemometer/" + location)
             data = json.load(f)
             f.close()
             config_data_object.set_path(data["path"])
-            config_data_object.set_logging_location(data["logging"])
+            config_data_object.set_logging_path(data["logging_path"])
+            config_data_object.set_log_filename(data["log_filename"])
             config_data_object.set_data_location(data["data"])
             config_data_object.set_server_port(data["simple-server-port"])
             config_data_object.set_logging_level(["logging-level"])
@@ -39,7 +40,8 @@ def get_config() -> config_data:
     else:
         print("was expecting json as a config file")
         config_data_object.set_path()
-        config_data_object.set_logging_location()
+        config_data_object.set_logging_path()
+        config_data_object.set_log_filename()
         config_data_object.set_data_location()
         config_data_object.set_server_port()
         config_data_object.set_logging_level()
@@ -50,7 +52,9 @@ def get_config() -> config_data:
 def listing_directory(page_name: str) -> str:
     """This lists all files in a specified directory, then outputs it as a string of html tags, ready for rendering."""
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + str(config.get_logging_location()), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+
     alist, name_newest_file = list_file_directory()
     blist = row_major(alist, len(alist))
     clist = html_table(blist)
@@ -67,7 +71,8 @@ def create_html_page_wrapper(name: str) -> tuple:
     :return: str, str
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("create_html_page_wrapper with " + name)
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
@@ -75,14 +80,14 @@ def create_html_page_wrapper(name: str) -> tuple:
     return title, end_tags
 
 
-def row_major(alist, SubLen) -> list:
+def row_major(alist, sublen) -> list:
     """
     Not quite sure of this yet
     :param alist: list
-    :param SubLen: int
+    :param sublen: int
     :return:
     """
-    return [alist[i:i+SubLen] for i in range(0, len(alist), SubLen)]
+    return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
 
 
 def html_table(input_value) -> list:
@@ -92,7 +97,8 @@ def html_table(input_value) -> list:
     :return list:
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     output = ['<table>']
     for sublist in input_value:
@@ -105,7 +111,8 @@ def html_table(input_value) -> list:
 
 def get_newest_file(input_list: list) -> str:
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     for value in range(-1, 30, 1):
         check_day = datetime.datetime.now() - datetime.timedelta(value)
@@ -127,7 +134,8 @@ def list_file_directory(directory="data/") -> tuple:
     :return: list
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("list_file_directory from directory: " + str(directory))
 
     list_of_files = []
@@ -147,7 +155,8 @@ def get_yesterdays_date() -> str:
     :return String:
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     yesterday = datetime.datetime.now() - datetime.timedelta(1)
     logging.debug(("Yesterday is: " + str(yesterday)[0:10]))
@@ -161,16 +170,18 @@ def file_handler(input_data) -> None:
     :return None: # should this be a boolean for success / failure?
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("file_handler")
 
     try:
-        temp_filename = str(config.get_path()) + str(datetime.datetime.today())[0:10] + ".txt"
-        logging.debug("Opening file, " + str(temp_filename))
+        today = datetime.datetime.today()
+        temp_filename = config.get_data_location() + today.strftime("%Y%M%d") + ".txt"
+        logging.debug(f"Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
-            time_stamp = str(datetime.datetime.now())
+            time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
             fileObject.write(f"{time_stamp},{input_data},\n")
-            logging.debug("File added to in file_handler()")
+            logging.debug(f"File added to in file_handler()")
     except FileExistsError or FileNotFoundError as err:
         logging.error("Exception error in file_handler()" + str(err), exc_info=True)
     return
@@ -180,17 +191,19 @@ def open_file(filename: str, default_path="data/"):
     """
     Find and open a file to read data from it.
     :param filename:
+    :param default_path:
     :return Error as string:
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
-    logging.debug("opening file with read-only")
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+    logging.debug(f"opening file with read-only")
 
     output = ""
     try:
         output = open(default_path + filename, "r")
     except Exception as err:
-        logging.error("Exception error in open_file()" + str(err), exc_info=True)
+        logging.error(f"Exception error in open_file()" + str(err), exc_info=True)
     if output is not None:
         pass
     else:
@@ -206,7 +219,8 @@ def sort_dates(input_list) -> list:
     :return list:
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     print("input list: ", input_list)
     date_output_list = []
@@ -225,7 +239,8 @@ def read_in_data(filename: str) -> list:
     Read in data from csv file.
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("Read_in_data from " + filename)
 
     output = []
@@ -246,7 +261,8 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     :return: list -> WeatherData(datetime, str)
     """
     config = get_config()
-    logging.basicConfig(filename=str(config.get_path()) + config.get_logging_location(), level=config.get_logging_level())
+    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("reformat_data for plotting")
 
     local_x = []
