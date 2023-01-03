@@ -5,8 +5,8 @@
 try:
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
-    import functions
-    import basic_plotting as basic_plot
+    from src import basic_plotting as basic_plot
+    from src import functions
     import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -17,7 +17,7 @@ def generate_html_page(name_of_page: str) -> None:
     This gets a list of file names and creates a small html page with those names
     :return:
     """
-    logging.basicConfig(filename="/logging/log.txt")
+    logging.basicConfig(filename="../logging/log.txt")
     logging.debug("simple browser generate_html_page() with page " + name_of_page)
 
     page = functions.listing_directory(name_of_page)
@@ -64,7 +64,7 @@ class WebServer(BaseHTTPRequestHandler):
 
 
 def setup() -> None:
-    logging.basicConfig(filename="/logging/log.txt")
+    logging.basicConfig(filename="../logging/log.txt")
     # plot of newest data
     basic_plot.create_plot()
     server = HTTPServer(('localhost', 7000), WebServer)
@@ -79,5 +79,5 @@ def setup() -> None:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(filename="/logging/log.txt")
+    logging.basicConfig(filename="../logging/log.txt")
     setup()

@@ -5,14 +5,14 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib
     import numpy as np
-    import functions
+    from src import functions
     import logging
-    from class_file import config_data
+    from ..anemometer.src.class_file import config_data
     from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
-default_file_name = "testing/test_data_from_counter.csv"
+default_file_name = "../testing/test_data_from_counter.csv"
 # can I remove this global variable?
 
 

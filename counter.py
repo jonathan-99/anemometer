@@ -14,11 +14,10 @@ try:
     import os
     import sys
     import RPi.GPIO as GPIO
-    import functions
+    from ..anemometer.src import functions
     import time
     import logging
-    from class_file import config_data
-    from functools import partial
+    from ..anemometer.src.class_file import config_data
 except Exception as e:
     print("importing error: ", e)
 

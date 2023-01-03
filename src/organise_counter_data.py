@@ -1,5 +1,4 @@
 import datetime
-# import timedelta
 
 """
 Open logging files, add up second to minutes to hours into a temp file, log into a logging file
@@ -31,7 +30,7 @@ def main():
     :return: normal completion state
     """
 
-    file_object = open("data/weather_logger.txt", "a")
+    file_object = open("../data/weather_logger.txt", "a")
     file_name = "data/" + get_yesterdays_date() + ".txt"
     try:
         yesterday_file = open(file_name, "r")

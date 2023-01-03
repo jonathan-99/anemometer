@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+"""
+Class file that covers all.
+"""
+
 from argparse import ArgumentError
 from datetime import datetime, timedelta
 from os.path import exists
@@ -5,8 +11,8 @@ from typing import Iterable, List
 import json, json.encoder
 import csv
 
+
 class WeatherData:
-    """Used to allow definition of methods which refer to current type declaration. Partial declaration below this"""
     pass
 
 class WeatherData:

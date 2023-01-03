@@ -9,7 +9,8 @@ try:
     import json
     import numpy as np
     import logging
-    from class_file import config_data
+    import re
+    from src.class_file import config_data
     from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -20,19 +21,17 @@ def get_config() -> config_data:
     Get the config from a json file and return an object class of that data.
     """
     location = "config.json"
-    type_of_file = "json"
-
     config_data_object = config_data()
-    print("Path debug default ", location)
-    if type_of_file == "json":
+
+    if location.lower().endswith('.json'):
         try:
-            f = open("/opt/anemometer/" + location)
+            f = open(location)
             data = json.load(f)
             f.close()
             config_data_object.set_path(data["path"])
             config_data_object.set_logging_path(data["logging_path"])
             config_data_object.set_log_filename(data["log_filename"])
-            config_data_object.set_data_location(data["data"])
+            config_data_object.set_data_location(data["data_path"])
             config_data_object.set_server_port(data["simple-server-port"])
             config_data_object.set_logging_level(["logging-level"])
         except FileExistsError or FileExistsError as err:
@@ -51,9 +50,7 @@ def get_config() -> config_data:
 
 def listing_directory(page_name: str) -> str:
     """This lists all files in a specified directory, then outputs it as a string of html tags, ready for rendering."""
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+    logging.debug("Listing directory accessed")
 
     alist, name_newest_file = list_file_directory()
     blist = row_major(alist, len(alist))
@@ -80,7 +77,7 @@ def create_html_page_wrapper(name: str) -> tuple:
     return title, end_tags
 
 
-def row_major(alist, sublen) -> list:
+def row_major(alist: list, sublen: int) -> list:
     """
     Not quite sure of this yet
     :param alist: list
@@ -96,9 +93,7 @@ def html_table(input_value) -> list:
     :param input_value:
     :return list:
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+    logging.debug("html_table")
 
     output = ['<table>']
     for sublist in input_value:
@@ -110,9 +105,7 @@ def html_table(input_value) -> list:
 
 
 def get_newest_file(input_list: list) -> str:
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
+    logging.debug("get_newest_file")
 
     for value in range(-1, 30, 1):
         check_day = datetime.datetime.now() - datetime.timedelta(value)
@@ -133,9 +126,6 @@ def list_file_directory(directory="data/") -> tuple:
     :param directory: str
     :return: list
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("list_file_directory from directory: " + str(directory))
 
     list_of_files = []
@@ -166,17 +156,14 @@ def get_yesterdays_date() -> str:
 def file_handler(input_data) -> None:
     """
     Open a file in "data" folder and add a time (now) and wind speed.
-    :param input_data:
-    :return None: # should this be a boolean for success / failure?
+    :param: input_data: float
+    :return: None: # should this be a boolean for success / failure?
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("file_handler")
 
     try:
         today = datetime.datetime.today()
-        temp_filename = config.get_data_location() + today.strftime("%Y%M%d") + ".txt"
+        temp_filename = str('data/') + today.strftime("%Y-%m-%d") + ".txt"
         logging.debug(f"Opening file, " + str(temp_filename))
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
@@ -187,65 +174,15 @@ def file_handler(input_data) -> None:
     return
 
 
-def open_file(filename: str, default_path="data/"):
-    """
-    Find and open a file to read data from it.
-    :param filename:
-    :param default_path:
-    :return Error as string:
-    """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
-    logging.debug(f"opening file with read-only")
-
-    output = ""
-    try:
-        output = open(default_path + filename, "r")
-    except Exception as err:
-        logging.error(f"Exception error in open_file()" + str(err), exc_info=True)
-    if output is not None:
-        pass
-    else:
-        output = "Error"  # need a better handle than this
-    return output
-
-
-def sort_dates(input_list) -> list:
-    """
-    Sort the dates of a list from string to YY MM DD HH.
-    Need to check format of the data as it returns integers
-    :param input_list:
-    :return list:
-    """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
-
-    print("input list: ", input_list)
-    date_output_list = []
-    for i in input_list:
-        date_output_list.append(datetime.datetime(int(i[0] + i[1]),
-                                                  int(i[3] + i[4]),
-                                                  int(i[6] + i[7]),
-                                                  int(i[9] + i[10])))
-    date_output_list.sort()  # this should go in ascending order
-    logging.debug("Sorted this list: " + str(date_output_list))
-    return date_output_list
-
-
 def read_in_data(filename: str) -> list:
     """
     Read in data from csv file.
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("Read_in_data from " + filename)
 
     output = []
     try:
-        file = open_file(str(config.get_path()) + filename)
+        file = open(filename)
         reader = csv.reader(file)
         for each_row in reader:
             output.append(each_row)
@@ -255,31 +192,53 @@ def read_in_data(filename: str) -> list:
     return output
 
 
+def handle_input_list_datetime(in_list: list, correct_date_regex: str) -> list:
+    """
+    Handle Input List accounts for an incorrect date plus hour format being passed in the list
+    from the original text file.
+    It converts it to the correct version if necessary and returns to the original list.
+    : param: input_list (list) : description
+    : param: correct_date_regex (str) : description
+    : param: incorrect_date_regex (str) : description
+    : return: input_list (list) : description
+    """
+
+    p = re.compile(correct_date_regex)
+    for count, value in enumerate(in_list):
+        m = p.match(value)
+        if m:
+            pass
+        else:
+            result = value.split('.')[0].split(':')[0]
+            in_list[count] = result
+    return in_list
+
+
 def reformat_data(input_list: list):  # how to declare two list returns?
     """
-    This will take data in str format "YY-MM-DD HH" and return into (datetime, str)
+    This will take data in str format "YY-MM-DD HH" and return into (datetime, str). If the datetime is
+    not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
+
+    This will create duplicates of HOURS and need to be resolved.
+
     :return: list -> WeatherData(datetime, str)
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("reformat_data for plotting")
 
     local_x = []
     local_y = []
 
     logging.debug("input list " + str(input_list))
-    for gl in input_list:
-        for counter, g in enumerate(gl):
-            if counter % 2 == 0:
-                temp = g.replace('"', '')
-                t = str(temp.lstrip())
-                tmp = str(t[0:2]) + str(t[3:5]) + str(t[6:8])
-                local_x.append(tmp)
-                # print("stuff: {}, {}, {}, hour {}".format(t[0:2], t[3:5], t[6:8], t[9:11]))
-            else:
-                local_y.append(str(g))
-        # output = sort_dates(local_x) # this takes a string YYMMDD and returns a datetime format.
+    for counter, g in enumerate(input_list):
+        if counter % 2 == 0:
+            gl = g[0:13]
+            local_x.append(gl)
+        else:
+             local_y.append(str(g))
     logging.debug("X axis values: " + str(local_x))
     logging.debug("Y axis values: " + str(local_y))
+
+    correct_date_regex = "([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])"
+    incorrect_date_regex = "([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)"
+    local_x = handle_input_list_datetime(local_x, correct_date_regex, incorrect_date_regex)
     return local_x, local_y

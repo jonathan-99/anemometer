@@ -2,9 +2,8 @@
 """Unit tests for the WeatherData and WeatherDataList types"""
 import sys
 sys.path.append("..")
-from weather_class import WeatherData, WeatherDataList
-from datetime import datetime, time, date
-from typing import List
+from src.weather_class import WeatherData, WeatherDataList
+from datetime import datetime
 import unittest
 
 class WD_tests(unittest.TestCase):
