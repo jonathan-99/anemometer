@@ -14,10 +14,10 @@ try:
     import os
     import sys
     import RPi.GPIO as GPIO
-    from ..anemometer.src import functions
+    from src import functions
     import time
     import logging
-    from ..anemometer.src.class_file import config_data
+    from src.class_file import config_data
 except Exception as e:
     print("importing error: ", e)
 
@@ -29,11 +29,9 @@ def crontab_method(number: str) -> None:
         if str(t) == number:
             interv = 3420
             a_wind_object = WindMonitor(interv, 17)
-            while True:
-                execute(a_wind_object)
+            execute(a_wind_object)
         else:
             pass
-
 
 class WindMonitor:
     global count
@@ -53,7 +51,7 @@ class WindMonitor:
 
     def add_count(*args) -> None:
         """
-        The callback function passes the PIN number to add_count.
+        The callback function passes the PINumber to add_count.
         It won't work without doing this, but the add_count doesn't need the number at this time.
         """
         global count
@@ -79,8 +77,6 @@ def calculate_speed(input_info: int, spare: int) -> float:
     :param spare:
     :return: speed: float
     """
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug(f"I am in calculating speed number: " + str(input_info))
 
     return (input_info*1.2) / spare
@@ -88,13 +84,8 @@ def calculate_speed(input_info: int, spare: int) -> float:
 
 def execute(wind_object) -> None:
     """
-    This function executes until either user interuption or until the interval in seconds completes.
+    This function executes until either user interruption or until the interval in seconds completes.
     """
-    config = functions.get_config()
-    print("(Execute) Config capture path: ", config.get_path())
-    print("(Execute) Config log location: ", config.get_logging_path(), config.get_log_filename())
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug(f'Ticks first count: ' + str(wind_object.show_count()))
 
     time.sleep(wind_object.get_interval())
@@ -108,7 +99,7 @@ def execute(wind_object) -> None:
 if __name__ == '__main__':
     config = functions.get_config()
     print("Config capture path: ", config.get_path())
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
+    total_path = config.get_logging_path() + config.get_log_filename()
     logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     # this should run the code when minute hits "01"

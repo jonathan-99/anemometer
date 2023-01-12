@@ -25,9 +25,8 @@ def get_config() -> config_data:
 
     if location.lower().endswith('.json'):
         try:
-            f = open(location)
-            data = json.load(f)
-            f.close()
+            with open(location) as fileObject:
+                data = json.load(fileObject)
             config_data_object.set_path(data["path"])
             config_data_object.set_logging_path(data["logging_path"])
             config_data_object.set_log_filename(data["log_filename"])
@@ -238,7 +237,7 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     logging.debug("X axis values: " + str(local_x))
     logging.debug("Y axis values: " + str(local_y))
 
-    correct_date_regex = "([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])"
-    incorrect_date_regex = "([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)"
-    local_x = handle_input_list_datetime(local_x, correct_date_regex, incorrect_date_regex)
+    correct_date_regex = '([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])'
+    incorrect_date_regex = '([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)'
+    local_x = handle_input_list_datetime(local_x, correct_date_regex)
     return local_x, local_y
