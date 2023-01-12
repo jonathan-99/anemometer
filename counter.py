@@ -27,8 +27,8 @@ def crontab_method(number: str) -> None:
         time_now = datetime.datetime.now()
         t = time_now.strftime("%M")
         if str(t) == number:
-            interval = 3420
-            a_wind_object = WindMonitor(3420, 17)
+            interv = 3420
+            a_wind_object = WindMonitor(interv, 17)
             while True:
                 execute(a_wind_object)
         else:
@@ -111,7 +111,5 @@ if __name__ == '__main__':
     total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
     logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
-    # interval = 3420
-    a_count = WindMonitor(3420, 17)
-    while True:
-        execute(a_count)
+    # this should run the code when minute hits "01"
+    crontab_method("01")
