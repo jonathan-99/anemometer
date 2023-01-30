@@ -23,16 +23,15 @@ except Exception as e:
 
 
 def crontab_method(number: str) -> None:
+    interv = 3420
     while True:
         time_now = datetime.datetime.now()
         t = time_now.strftime("%M")
         if str(t) == number:
-            interv = 3420
             a_wind_object = WindMonitor(interv, 17)
             execute(a_wind_object)
         else:
             pass
-
 class WindMonitor:
     global count
 
@@ -98,7 +97,8 @@ def execute(wind_object) -> None:
 
 if __name__ == '__main__':
     config = functions.get_config()
-    print("Config capture path: ", config.get_path())
+    value = datetime.datetime.now()
+    print("Config capture path: ", config.get_path(), str(value))
     total_path = config.get_logging_path() + config.get_log_filename()
     logging.basicConfig(filename=total_path, level=config.get_logging_level())
 

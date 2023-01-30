@@ -162,10 +162,12 @@ def file_handler(input_data) -> None:
 
     try:
         today = datetime.datetime.today()
-        temp_filename = str('data/') + today.strftime("%Y-%m-%d") + ".txt"
+        temp_filename = "data/" + today.strftime("%Y-%m-%d") + ".txt"
         logging.debug(f"Opening file, " + str(temp_filename))
+        print("file opening ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
+            print("Timestamp: ", time_stamp[0:10])
             fileObject.write(f"{time_stamp},{input_data},\n")
             logging.debug(f"File added to in file_handler()")
     except FileExistsError or FileNotFoundError as err:
@@ -233,7 +235,7 @@ def reformat_data(input_list: list):  # how to declare two list returns?
             gl = g[0:13]
             local_x.append(gl)
         else:
-             local_y.append(str(g))
+            local_y.append(str(g))
     logging.debug("X axis values: " + str(local_x))
     logging.debug("Y axis values: " + str(local_y))
 
