@@ -32,6 +32,8 @@ def crontab_method(number: str) -> None:
             execute(a_wind_object)
         else:
             pass
+
+
 class WindMonitor:
     global count
 
@@ -98,8 +100,8 @@ def execute(wind_object) -> None:
 if __name__ == '__main__':
     config = functions.get_config()
     value = datetime.datetime.now()
-    print("Config capture path: ", config.get_path(), str(value))
     total_path = config.get_logging_path() + config.get_log_filename()
+    print("Config capture path: ", total_path, str(value))
     logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     # this should run the code when minute hits "01"
