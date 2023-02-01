@@ -43,7 +43,8 @@ def get_config() -> config_data:
         config_data_object.set_data_location()
         config_data_object.set_server_port()
         config_data_object.set_logging_level()
-    logging.debug("We found these configs: " + str(config_data_object.show_all()))
+    logging.debug('We found these configs: ' + str(config_data_object.show_all()))
+    print("All config data: ", config_data_object.show_all())
     return config_data_object
 
 
@@ -162,7 +163,7 @@ def file_handler(input_data) -> None:
 
     try:
         today = datetime.datetime.today()
-        temp_filename = "data/" + today.strftime("%Y-%m-%d") + ".txt"
+        temp_filename = 'data/' + today.strftime("%Y-%m-%d") + '.txt'
         logging.debug(f"Opening file, " + str(temp_filename))
         print("file opening ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
