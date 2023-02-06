@@ -23,7 +23,8 @@ except Exception as e:
 
 
 def crontab_method(number: str) -> None:
-    interv = 3420
+    # 60 secs * 60 mins
+    interv = 60*58
     while True:
         time_now = datetime.datetime.now()
         t = time_now.strftime("%M")
@@ -87,7 +88,7 @@ def execute(wind_object) -> None:
     """
     This function executes until either user interruption or until the interval in seconds completes.
     """
-    logging.debug(f'Ticks first count: ' + str(wind_object.show_count()))
+    logging.debug(f'Ticks first count: ' + str(wind_object.show_count()) + str(datetime.datetime.now()))
 
     time.sleep(wind_object.get_interval())
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
@@ -95,7 +96,8 @@ def execute(wind_object) -> None:
     functions.file_handler(speed)
     logging.debug(f"For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
-
+    #  this ensures the program pauses for the full hour
+    time.sleep((60*60) - wind_object.get_interval())
 
 if __name__ == '__main__':
     config = functions.get_config()
@@ -105,4 +107,6 @@ if __name__ == '__main__':
     logging.basicConfig(filename=total_path, level=config.get_logging_level())
 
     # this should run the code when minute hits "01"
-    crontab_method("01")
+    a_object = WindMonitor((60*58), 17)
+    while True:
+        execute(a_object)

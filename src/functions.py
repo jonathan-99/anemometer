@@ -163,16 +163,16 @@ def file_handler(input_data) -> None:
 
     try:
         today = datetime.datetime.today()
-        temp_filename = 'data/' + today.strftime("%Y-%m-%d") + '.txt'
+        temp_filename = 'data/' + today.strftime("%Y-%m-%d") + '.txt' # alter the config.data_path
         logging.debug(f"Opening file, " + str(temp_filename))
         print("file opening ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
-            print("Timestamp: ", time_stamp[0:10])
+            print("Reduced timestamp and data: ", time_stamp[0:13], " : ", input_data[0:4])
             fileObject.write(f"{time_stamp},{input_data},\n")
-            logging.debug(f"File added to in file_handler()")
+            logging.debug(f'File added to in file_handler()')
     except FileExistsError or FileNotFoundError as err:
-        logging.error("Exception error in file_handler()" + str(err), exc_info=True)
+        logging.error('Exception error in file_handler()' + str(err), exc_info=True)
     return
 
 
