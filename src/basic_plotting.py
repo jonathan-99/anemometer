@@ -20,12 +20,11 @@ def basic_plot(input_list, save=False) -> None:
     """
     This functions takes dates (and hours) and plots them on a basic x-y chart.
     """
-    config_class = functions.get_config()
-    logging.basicConfig(filename=config_class.get_logging_location())
     logging.debug("basic_plot" + str(input_list) + "saving? " + str(save))
 
     # even to x, odd to y
-    dates, y_values = functions.reformat_data(input_list)
+    dates, y_values = functions.split_list(input_list)
+    dates = functions.handle_input_list_datetime(dates)
     print("dates: ", dates, " : y_values: ", y_values)
 
     x = np.array(dates)
@@ -52,8 +51,6 @@ def basic_plot(input_list, save=False) -> None:
 
 
 def create_plot() -> None:
-    config_class = functions.get_config()
-    logging.basicConfig(filename=config_class.get_logging_location())
     logging.debug("Within create plot for png creation.")
 
     # list_file_directory returns a tuple.
