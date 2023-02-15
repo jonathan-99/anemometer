@@ -1,0 +1,6 @@
+[run]
+include = src/*
+omit = *migrations*, *tests*
+
+[html]
+directory = coverage_html_report

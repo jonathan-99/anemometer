@@ -193,3 +193,11 @@ The output is done within the code, so any further output should just be piped t
 I have considered adding this element at the bottom of crontab. 
 Upon reboot of the device, it should run this script again. 
 I removed this as it might reboot mid-hour and that would mess up the data files.
+
+Coverage Report (15/02/23)
+
+| Name               |Stmts|Miss|Cover|
+|--------------------|-----|----|-----|
+| src\class_file.py  |43|22|49%|
+| src\functions.py   |144|90|38%|
+| TOTAL              | 187| 112| 40%|

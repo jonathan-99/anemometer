@@ -93,7 +93,7 @@ def execute(wind_object) -> None:
     time.sleep(wind_object.get_interval())
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
     logging.debug(f"Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
-    functions.file_handler(speed)
+    functions.file_handler(functions.get_todays_date(), speed)
     logging.debug(f"For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
     #  this ensures the program pauses for the full hour

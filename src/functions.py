@@ -49,7 +49,10 @@ def get_config() -> config_data:
 
 
 def listing_directory(page_name: str) -> str:
-    """This lists all files in a specified directory, then outputs it as a string of html tags, ready for rendering."""
+    """
+    This lists all files in a specified directory,
+    then outputs it as a string of html tags, ready for rendering.
+    """
     logging.debug("Listing directory accessed")
 
     alist, name_newest_file = list_file_directory()
@@ -67,9 +70,6 @@ def create_html_page_wrapper(name: str) -> tuple:
     Need the start and end of a html page.
     :return: str, str
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
     logging.debug("create_html_page_wrapper with " + name)
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
@@ -144,16 +144,20 @@ def get_yesterdays_date() -> str:
     Simple function for getting yesterday's date.
     :return String:
     """
-    config = get_config()
-    total_path = config.get_path() + config.get_logging_path() + config.get_log_filename()
-    logging.basicConfig(filename=total_path, level=config.get_logging_level())
-
     yesterday = datetime.datetime.now() - datetime.timedelta(1)
     logging.debug(("Yesterday is: " + str(yesterday)[0:10]))
     return str(yesterday)[0:10]
 
 
-def file_handler(input_data) -> None:
+def get_todays_date() -> datetime:
+    """
+    Get date for a filename.
+    """
+    output = datetime.datetime.now()
+    return 'data/' + output.strftime("%Y-%m-%d") + '.txt'
+
+
+def file_handler(temp_filename, input_data) -> str:
     """
     Open a file in "data" folder and add a time (now) and wind speed.
     :param: input_data: float
@@ -162,8 +166,6 @@ def file_handler(input_data) -> None:
     logging.debug("file_handler")
 
     try:
-        today = datetime.datetime.today()
-        temp_filename = 'data/' + today.strftime("%Y-%m-%d") + '.txt' # alter the config.data_path
         logging.debug(f"Opening file, " + str(temp_filename))
         print("file opening ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
@@ -173,7 +175,8 @@ def file_handler(input_data) -> None:
             logging.debug(f'File added to in file_handler()')
     except FileExistsError or FileNotFoundError as err:
         logging.error('Exception error in file_handler()' + str(err), exc_info=True)
-    return
+        return str(err)
+    return "True"
 
 
 def read_in_data(filename: str) -> list:
@@ -194,16 +197,20 @@ def read_in_data(filename: str) -> list:
     return output
 
 
-def handle_input_list_datetime(in_list: list, correct_date_regex: str) -> list:
+def handle_input_list_datetime(in_list: list) -> list:
     """
-    Handle Input List accounts for an incorrect date plus hour format being passed in the list
-    from the original text file.
-    It converts it to the correct version if necessary and returns to the original list.
+    If the datetime is not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
+
+    This will create duplicates of HOURS and need to be resolved.
+    This needs to extract the date regex out to config.
+
     : param: input_list (list) : description
     : param: correct_date_regex (str) : description
     : param: incorrect_date_regex (str) : description
     : return: input_list (list) : description
     """
+    correct_date_regex = '([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])'
+    incorrect_date_regex = '([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)'
 
     p = re.compile(correct_date_regex)
     for count, value in enumerate(in_list):
@@ -216,12 +223,9 @@ def handle_input_list_datetime(in_list: list, correct_date_regex: str) -> list:
     return in_list
 
 
-def reformat_data(input_list: list):  # how to declare two list returns?
+def split_list(input_list: list):  # how to declare two list returns?
     """
-    This will take data in str format "YY-MM-DD HH" and return into (datetime, str). If the datetime is
-    not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
-
-    This will create duplicates of HOURS and need to be resolved.
+    This will take data in str format "YY-MM-DD HH speed.speed" and return into (datetime, str).
 
     :return: list -> WeatherData(datetime, str)
     """
@@ -240,7 +244,4 @@ def reformat_data(input_list: list):  # how to declare two list returns?
     logging.debug("X axis values: " + str(local_x))
     logging.debug("Y axis values: " + str(local_y))
 
-    correct_date_regex = '([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])'
-    incorrect_date_regex = '([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)'
-    local_x = handle_input_list_datetime(local_x, correct_date_regex)
     return local_x, local_y
