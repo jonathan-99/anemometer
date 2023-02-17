@@ -12,19 +12,12 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def main_function() -> int:
-    """
-    This is the main function which holds all arguments to effectively control the anemometer.
-    """
-    config_class = functions.get_config()
-    logging.basicConfig(filename=str(config_class.get_path()) + config_class.get_logging_location())
-    logging.debug("main function fro anemometer.py")
-
+def setup_argparse(self):
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--capture", help="run the capture")
     parser.add_argument("-p", "--plot", type=str,
-                        default=str(config_class.get_path()) + "testing/test_data_from_counter.csv",
-                        const=str(config_class.get_path()) + "testing/test_data_from_counter.csv",
+                        default='testing/test_data_from_counter.csv',
+                        const='testing/test_data_from_counter.csv',
                         nargs='?',
                         dest="input_a",
                         help="do a basic plot of data held")
@@ -32,8 +25,19 @@ def main_function() -> int:
     parser.add_argument("-P", "--pin", default="17", help="run the counter")
     parser.add_argument("-i", "--interval", default="3420", help="run the counter")
     parser.add_argument("--crontab", default="00", help="run the counter on a schedule like crontab")
-    args = parser.parse_args()
 
+    return parser
+
+
+def main_function() -> int:
+    """
+    This is the main controller to effectively control the anemometer.
+    """
+    logging.basicConfig(filename='logging/log.txt')
+    logging.debug("main function from anemometer.py")
+
+    parser = setup_argparse()
+    args = parser.parse_args(sys.argv[1:])
     if args.capture:
         logging.debug("Argument for Capture used")
         a = Capture.Capture()

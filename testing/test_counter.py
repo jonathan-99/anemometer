@@ -23,13 +23,13 @@ class test_counter(unittest.TestCase):
             Correct values
             """
             output = counter.calculate_speed(input_a, input_b)
-            self.assertTrue(output==12, "Calculating speed works")
+            self.assertTrue(output == 12, "Calculating speed works")
         with self.subTest():
             """
             Wrong values.
             """
             output = counter.calculate_speed(input_a, input_b)
-            self.assertFalse(output==10)
+            self.assertFalse(output == 10)
 
 
 
