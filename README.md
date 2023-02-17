@@ -194,10 +194,12 @@ I have considered adding this element at the bottom of crontab.
 Upon reboot of the device, it should run this script again. 
 I removed this as it might reboot mid-hour and that would mess up the data files.
 
-Coverage Report (15/02/23)
+Coverage Report (17/02/23)
 
-| Name               |Stmts|Miss|Cover|
-|--------------------|-----|----|-----|
-| src\class_file.py  |43|22|49%|
-| src\functions.py   |144|90|38%|
-| TOTAL              | 187| 112| 40%|
+| Name                  | Stmts | Miss | Cover |
+|-----------------------|-------|------|-------|
+| src\Capture.py        | 29    | 13   | 55%   |
+| src\basic_plotting.py | 44    | 33   | 25%   |
+| src\class_file.py     | 43    | 22   | 49%   |
+| src\functions.py      | 144   | 90   | 38%   |
+| TOTAL                 | 260   | 158  | 39%   |
