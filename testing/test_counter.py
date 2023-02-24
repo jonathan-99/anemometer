@@ -31,7 +31,35 @@ class test_counter(unittest.TestCase):
             output = counter.calculate_speed(input_a, input_b)
             self.assertFalse(output == 10)
 
+    def test_create_instance(self):
+        """
+        Test that an instance is created.
+        """
+        with self.subTest():
+            seconds = 5
+            pin = 17
+            a = counter.WindMonitor(seconds, pin)
+            self.assertIsInstance(a, counter.WindMonitor)
 
+    def test_add_tick(self):
+        """
+        Test that you can: add 5 ticks to an instance then, you can recall the interval, then reset count.
+        """
+        seconds = 5
+        pin = 17
+        b = counter.WindMonitor(seconds, pin)
+        with self.subTest():
+            b.add_count()
+            b.add_count()
+            b.add_count()
+            b.add_count()
+            b.add_count()
+            self.assertEqual(b.show_count(), 5)
+        with self.subTest():
+            self.assertEqual(b.get_interval(), 5)
+        with self.subTest():
+            b.reset()
+            self.assertEqual(b.show_count(), 0)
 
 if __name__ == '__main__':
     unittest.main()

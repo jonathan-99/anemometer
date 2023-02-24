@@ -197,7 +197,7 @@ def read_in_data(filename: str) -> list:
     return output
 
 
-def handle_input_list_datetime(in_list: list) -> list:
+def handle_input_list_datetime(in_list: list, input_regex='([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])') -> list:
     """
     If the datetime is not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
 
