@@ -7,7 +7,7 @@ try:
     import numpy as np
     from src import functions
     import logging
-    from ..anemometer.src.class_file import config_data
+    from src.class_file import config_data
     from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
