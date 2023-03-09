@@ -196,15 +196,16 @@ I removed this as it might reboot mid-hour and that would mess up the data files
 
 Coverage Report (17/02/23)
 
-| Name                                      | Stmts | Miss      | Cover     |
-|-------------------------------------------|-------|-----------|-----------|
-| src\Capture.py                            | 29    | 13        | 55%       |
-| src\basic_plotting.py                     | 44    | 30        | 32%       |
-| src\class_file.py                         | 43    | 22        | 49%       |
-| src\functions.py                          | 144   | 90        | 38%       |
-| src\organise_counter_data.py              | 23    | 23        | 0%        |
-| src\original.py                           | 24    | 24        | 0%        |
-| src\simple_browser.py                     | 55    | 55        | 0%        |
-| src\weather_class.py                      | 101   | 101       | 0%        |
-| ------------------------------------------| -     | -     | -     |
-| TOTAL                                     | 463   | 358       | 23%       |
+| Name                                       | Stmts | Miss | Cover |
+|--------------------------------------------|-------|------|-------|
+| src\Capture.py                             | 29    | 13   | 55%   |
+| src\__init__.py                            | 0     | 0    | 100%  |
+| src\basic_plotting.py                      | 44    | 30   | 32%   |
+| src\class_file.py                          | 43    | 16   | 63%   |
+| src\functions.py                           | 148   | 36   | 76%   |
+| src\organise_counter_data.py               | 23    | 23   | 0%    |
+| src\original.py                            | 24    | 24   | 0%    |
+| src\simple_browser.py                      | 55    | 55   | 0%    |
+| src\weather_class.py                       | 101   | 101  | 0%    |
+| ------------------------------------------ | -     | -    | -     |
+| TOTAL                                      | 467   | 298  | 36%   |
