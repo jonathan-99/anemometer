@@ -8,8 +8,8 @@ class TestReadInData(unittest.TestCase):
         """
         When a filename is passed, it creates the file.
         """
-        output = functions.read_in_data("test_data_from_counter.csv")
-        file_exists = exists("test_data_from_counter.csv")
+        output = functions.read_in_data("testing/test_data_from_counter.csv")
+        file_exists = exists("testing/test_data_from_counter.csv")
         self.assertEqual(type(output), list)
         self.assertTrue(file_exists)
 

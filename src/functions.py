@@ -48,14 +48,15 @@ def get_config() -> config_data:
     return config_data_object
 
 
-def listing_directory(page_name: str) -> str:
+def listing_directory(page_name: str, default_directory='data/') -> str:
     """
     This lists all files in a specified directory,
     then outputs it as a string of html tags, ready for rendering.
     """
     logging.debug("Listing directory accessed")
 
-    alist, name_newest_file = list_file_directory()
+    alist = list_file_directory(default_directory)
+    most_recent_file = get_newest_file(alist)
     blist = row_major(alist, len(alist))
     clist = html_table(blist)
     c = ""
@@ -71,6 +72,7 @@ def create_html_page_wrapper(name: str) -> tuple:
     :return: str, str
     """
     logging.debug("create_html_page_wrapper with " + name)
+
     title = "<!DOCTYPE html><head><title>" + name
     title += "</title></head><body>"
     end_tags = "</body></html>"
@@ -84,7 +86,10 @@ def row_major(alist: list, sublen: int) -> list:
     :param sublen: int
     :return:
     """
-    return [alist[i:i+sublen] for i in range(0, len(alist), sublen)]
+    for i in range(0, len(alist), sublen):
+        output = alist[i:i + sublen]
+        print("output: ", output)
+    return output
 
 
 def html_table(input_value) -> list:
@@ -119,7 +124,7 @@ def get_newest_file(input_list: list) -> str:
     return "No file found"
 
 
-def list_file_directory(directory="data/") -> tuple:
+def list_file_directory(directory='data/') -> list:
     """
     Search through 'data' folder for all names of files and return them in a string. This will enable
     the index.html file to list them safely for a browser
@@ -127,16 +132,15 @@ def list_file_directory(directory="data/") -> tuple:
     :return: list
     """
     logging.debug("list_file_directory from directory: " + str(directory))
-
+    print("Directory passed: ", directory)
     list_of_files = []
-    for path in os.listdir(directory):
-        # check if current path is a file
-        if os.path.isfile(os.path.join(directory, path)):
-            list_of_files.append(path)
-    output_file_name = get_newest_file(list_of_files)
-    output_tuple = namedtuple("Directory", ["list_of_files", "output_file_name"])
-    logging.debug("list of files: " + output_tuple["list_of_files"] + "and newest file: " + output_file_name)
-    return output_tuple(list_of_files, output_file_name)
+    for afile in os.listdir(directory):
+        extension = os.path.splitext(afile)
+        if extension[1] == '.py':
+            list_of_files.append(extension[0])
+        else:
+            pass
+    return list_of_files
 
 
 def get_yesterdays_date() -> str:
