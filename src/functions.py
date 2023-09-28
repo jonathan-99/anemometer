@@ -84,12 +84,12 @@ def row_major(alist: list, sublen: int) -> list:
     Not quite sure of this yet
     :param alist: list
     :param sublen: int
-    :return:
+    :return: output_list
     """
     for i in range(0, len(alist), sublen):
-        output = alist[i:i + sublen]
-        print("output: ", output)
-    return output
+        output_list = alist[i:i + sublen]
+        print("output: ", output_list)
+    return output_list
 
 
 def html_table(input_value) -> list:
@@ -174,7 +174,7 @@ def file_handler(temp_filename, input_data) -> str:
         print("file opening ", temp_filename)
         with open(temp_filename, 'a+') as fileObject:
             time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
-            print("Reduced timestamp and data: ", time_stamp[0:13], " : ", input_data[0:4])
+            print("Reduced timestamp and data: ", str(time_stamp[0:13]), " : ", str(input_data[0:4]))
             fileObject.write(f"{time_stamp},{input_data},\n")
             logging.debug(f'File added to in file_handler()')
     except FileExistsError or FileNotFoundError as err:
