@@ -27,7 +27,7 @@ def get_config() -> config_data:
              "config.json",
              "anemometer/src/config.json",
              ]
-    for i in range (0, len(alist), 1):
+    for i in range(0, len(alist), 1):
         print("check json file location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
     config_data_object = config_data()
 
@@ -88,15 +88,15 @@ def create_html_page_wrapper(name: str) -> tuple:
     return title, end_tags
 
 
-def row_major(alist: list, sublen: int) -> list:
+def row_major(alist: list, sub_len: int) -> list:
     """
     Not quite sure of this yet
     :param alist: list
-    :param sublen: int
+    :param sub_len: int
     :return: list: output_list
     """
-    for i in range(0, len(alist), sublen):
-        output_list = alist[i:i + sublen]
+    for i in range(0, len(alist), sub_len):
+        output_list = alist[i:i + sub_len]
         print("output: ", output_list)
     return output_list
 
@@ -143,8 +143,8 @@ def list_file_directory(directory='data/') -> list:
     logging.debug("list_file_directory from directory: " + str(directory))
     print("Directory passed: ", directory)
     list_of_files = []
-    for afile in os.listdir(directory):
-        extension = os.path.splitext(afile)
+    for a_file in os.listdir(directory):
+        extension = os.path.splitext(a_file)
         if extension[1] == '.py':
             list_of_files.append(extension[0])
         else:
@@ -169,6 +169,7 @@ def get_todays_date() -> datetime:
     output = datetime.datetime.now()
     return 'data/' + output.strftime("%Y-%m-%d") + '.txt'
 
+
 def create_weather_list(in_str: str) -> weather_data_object:
     """
     This creates a list of weather objects if there are multiple instances. Returns list.
@@ -182,6 +183,7 @@ def create_weather_list(in_str: str) -> weather_data_object:
         output_list.windSpeed = temp_list[i + 1]
     return output_list
 
+
 def file_handler(time_stamp: str, speed: float, filename='data/file.txt') -> str:
     """
     Open a file in "data" folder and add a time (now) and wind speed only.
@@ -189,7 +191,7 @@ def file_handler(time_stamp: str, speed: float, filename='data/file.txt') -> str
     This function does not accept lists of multiple weatherData.
     :param: time_stamp(2022-07-26 21): str
     :param: speed(12.2): float
-    :pram: filename(data/2022-07-26): str
+    :param: filename(data/2022-07-26): str
     :return: string("True" or Error message as str): str
     """
     logging.debug("file_handler()")
@@ -226,17 +228,18 @@ def read_in_data(filename: str) -> list:
     return output
 
 
-def handle_input_list_datetime(in_list: list, input_regex='([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])') -> list:
+def handle_input_list_datetime(in_list: list,
+                               input_regex='([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])') -> list:
     """
     If the datetime is not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
 
     This will create duplicates of HOURS and need to be resolved.
     This needs to extract the date regex out to config.
 
-    : param: input_list (list) : description
-    : param: correct_date_regex (str) : description
-    : param: incorrect_date_regex (str) : description
-    : return: input_list (list) : description
+    :param: input_list (list) : description
+    :param: correct_date_regex (str) : description
+    :param: incorrect_date_regex (str) : description
+    :return: input_list (list) : description
     """
     correct_date_regex = '([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])'
     incorrect_date_regex = '([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)'
@@ -254,7 +257,7 @@ def handle_input_list_datetime(in_list: list, input_regex='([0-9][0-9])-([0-9][0
 
 def split_list(input_list: list):  # how to declare two list returns?
     """
-    This will take data in str format "YY-MM-DD HH speed.speed" and return into (datetime, str).
+    This will take data in str format "YY-MM-DD HH speed.value" and return into (datetime, str).
 
     :return: list -> WeatherData(datetime, str)
     """
