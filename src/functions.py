@@ -20,11 +20,12 @@ def get_config() -> config_data:
     """
     Get the config from a json file and return an object class of that data.
     """
-    location = "~../../opt/anemometer/src/config.json"
+    location = "config.json"
     alist = ["~../src/config.json",
              "~../config.json",
              "~src/config.json",
              "~config.json",
+             "config.json",
              "~anemometer/src/config.json",
              "~/anemometer/src/config.json",
              "~opt/anemometer/src/config.json",
@@ -44,7 +45,7 @@ def get_config() -> config_data:
     print("---You are here -- {}".format(dir_path))
     if location.lower().endswith('.json'):
         try:
-            with open(location) as fileObject:
+            with open(location, 'r') as fileObject:
                 data = json.load(fileObject)
             config_data_object.set_path(data["path"])
             config_data_object.set_logging_path(data["logging_path"])
