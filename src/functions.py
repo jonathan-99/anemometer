@@ -40,6 +40,8 @@ def get_config() -> config_data:
         print("check json file location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
     config_data_object = config_data()
 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    print("---You are here -- {}".format(dir_path))
     if location.lower().endswith('.json'):
         try:
             with open(location) as fileObject:
