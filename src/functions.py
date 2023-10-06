@@ -45,6 +45,7 @@ def get_config() -> config_data:
     print("---You are here -- {}".format(dir_path))
     if location.lower().endswith('.json'):
         try:
+            print("--This is the path -- {} - {}".format(os.path.isfile(location), os.path.exists(location)))
             with open(location, 'r') as fileObject:
                 data = json.load(fileObject)
             config_data_object.set_path(data["path"])
