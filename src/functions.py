@@ -30,7 +30,9 @@ def get_config() -> config_data:
              "~opt/anemometer/src/config.json",
              "~/opt/anemometer/src/config.json",
              "~../opt/anemometer/src/config.json",
+             "not this"
              "~../../opt/anemometer/src/config.json",
+             "above this"
              "~../../../opt/anemometer/src/config.json",
              "~../../../~/opt/anemometer/src/config.json",
              ]
