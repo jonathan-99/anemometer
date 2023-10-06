@@ -20,7 +20,7 @@ def get_config() -> config_data:
     """
     Get the config from a json file and return an object class of that data.
     """
-    location = "~../src/config.json"
+    location = "~../../opt/anemometer/src/config.json"
     alist = ["~../src/config.json",
              "~../config.json",
              "~src/config.json",
