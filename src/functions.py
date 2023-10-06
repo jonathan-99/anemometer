@@ -26,6 +26,9 @@ def get_config() -> config_data:
              "~src/config.json",
              "~config.json",
              "~anemometer/src/config.json",
+             "~/anemometer/src/config.json",
+             "~opt/anemometer/src/config.json",
+             "~/opt/anemometer/src/config.json",
              ]
     for i in range(0, len(alist), 1):
         print("check json file location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
