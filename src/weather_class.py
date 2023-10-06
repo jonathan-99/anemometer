@@ -22,6 +22,10 @@ class WeatherData:
         self.eventTime = init_time or datetime.now()
         self.windSpeed = init_speed or 0.0
 
+    def __init__(self) -> None:
+        self.eventTime = ""
+        self.windSpeed = 0.0
+
     def get_data(self) -> str:
         """REVIEW: I would question why you would do this at all - you have an instance with attributes..."""
         return self.eventTime, self.windSpeed

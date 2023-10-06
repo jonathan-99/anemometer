@@ -84,6 +84,9 @@ def calculate_speed(input_info: int, spare: int) -> float:
     return (input_info*1.2) / spare
 
 
+def get_time_stamp() -> str:
+    return str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))[0:13]
+
 def execute(wind_object) -> None:
     """
     This function executes until either user interruption or until the interval in seconds completes.
@@ -93,7 +96,9 @@ def execute(wind_object) -> None:
     time.sleep(wind_object.get_interval())
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
     logging.debug(f"Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
-    functions.file_handler(functions.get_todays_date(), speed)
+    timestamp = get_time_stamp()
+    filename = "data/" + timestamp
+    functions.file_handler(timestamp, speed, filename)
     logging.debug(f"For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
     #  this ensures the program pauses for the full hour

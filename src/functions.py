@@ -7,11 +7,11 @@ try:
     import sys
     import csv
     import json
-    import numpy as np
     import logging
     import re
     from src.class_file import config_data
     from collections import namedtuple
+    import src.weather_class as weather_data_object
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -57,6 +57,7 @@ def listing_directory(page_name: str, default_directory='data/') -> str:
 
     alist = list_file_directory(default_directory)
     most_recent_file = get_newest_file(alist)
+    print("listing_directory() - {}".format(most_recent_file))
     blist = row_major(alist, len(alist))
     clist = html_table(blist)
     c = ""
@@ -84,7 +85,7 @@ def row_major(alist: list, sublen: int) -> list:
     Not quite sure of this yet
     :param alist: list
     :param sublen: int
-    :return: output_list
+    :return: list: output_list
     """
     for i in range(0, len(alist), sublen):
         output_list = alist[i:i + sublen]
@@ -160,26 +161,42 @@ def get_todays_date() -> datetime:
     output = datetime.datetime.now()
     return 'data/' + output.strftime("%Y-%m-%d") + '.txt'
 
+def create_weather_list(in_str: str) -> weather_data_object:
+    """
+    This creates a list of weather objects if there are multiple instances. Returns list.
+    """
 
-def file_handler(temp_filename, input_data) -> str:
+    output_list = weather_data_object.WeatherData()
+    temp_list = in_str.replace("'", "").split(',')
+    for i in range(0, len(temp_list), 2):
+        print("create_list() - index number {}".format(i))
+        output_list.eventTime = temp_list[i]
+        output_list.windSpeed = temp_list[i + 1]
+    return output_list
+
+def file_handler(time_stamp: str, speed: float, filename='data/file.txt') -> str:
     """
-    Open a file in "data" folder and add a time (now) and wind speed.
-    :param: input_data: float
-    :return: None: # should this be a boolean for success / failure?
+    Open a file in "data" folder and add a time (now) and wind speed only.
+    This function does not check vailidty of data.
+    This function does not accept lists of multiple weatherData.
+    :param: time_stamp(2022-07-26 21): str
+    :param: speed(12.2): float
+    :pram: filename(data/2022-07-26): str
+    :return: string("True" or Error message as str): str
     """
-    logging.debug("file_handler")
+    logging.debug("file_handler()")
 
     try:
-        logging.debug(f"Opening file, " + str(temp_filename))
-        print("file opening ", temp_filename)
-        with open(temp_filename, 'a+') as fileObject:
-            time_stamp = str(datetime.datetime.now().strftime("%Y %m %d %H:%M:%S"))
-            print("Reduced timestamp and data: ", str(time_stamp[0:13]), " : ", str(input_data[0:4]))
-            fileObject.write(f"{time_stamp},{input_data},\n")
+        logging.debug(f"Opening file, " + str(filename))
+        print("file opening - {}".format(filename))
+        with open(filename, 'a+') as fileObject:
+            print("file_handler() - type {} - speed {}".format(type(speed), speed))
+            fileObject.write(f"{time_stamp},{speed},\n")
             logging.debug(f'File added to in file_handler()')
     except FileExistsError or FileNotFoundError as err:
-        logging.error('Exception error in file_handler()' + str(err), exc_info=True)
-        return str(err)
+        return_string = 'Exception error in file_handler() - {}'.format(str(err))
+        logging.error(return_string, exc_info=True)
+        return return_string
     return "True"
 
 
