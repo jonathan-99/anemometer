@@ -2,6 +2,9 @@ import src.functions as functions
 import unittest
 class testGetConfig(unittest.TestCase):
     def test_get_config(self):
+        """
+        need testing config location
+        """
         test_config = functions.get_config()
         with self.subTest():
             self.assertEqual(test_config.get_logging_path(), 'logging/')

@@ -5,29 +5,12 @@
 try:
     import sys
     from http.server import BaseHTTPRequestHandler, HTTPServer
-    from src import basic_plotting as basic_plot
-    from src import functions
+    import src.basic_plotting as basic_plot
+    import src.functions
+    import src.rendering_html_class as html_class
     import logging
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
-
-
-def generate_html_page(name_of_page: str) -> None:
-    """
-    This gets a list of file names and creates a small html page with those names
-    :return:
-    """
-    logging.basicConfig(filename='logging/log.txt')
-    logging.debug('simple browser generate_html_page() with page ' + name_of_page)
-
-    page = functions.listing_directory(name_of_page)
-    try:
-        with open(name_of_page + ".html", "w") as fileObject:
-            fileObject.write(page)
-    except FileExistsError as e:
-        print("<html><body><h1>" + "File Error" + "</h1></body></html>")
-        logging.error("File Exists Error in generate_html_page()", exc_info=True)
-    return
 
 
 class WebServer(BaseHTTPRequestHandler):
@@ -49,8 +32,8 @@ class WebServer(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(bytes(file_to_open, "utf-8"))
 
-    def do_GET(self) -> bool:
-        generate_html_page("table")
+    def do_get(self) -> bool:
+        html_class.RenderingHtmlPage("table")
         if self.path == "/":
             self.serve_page("/index.html")
             logging.debug("Served main index.html page")

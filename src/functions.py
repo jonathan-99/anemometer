@@ -9,160 +9,24 @@ try:
     import json
     import logging
     import re
-    from src.class_file import config_data
+    from src.class_file import ConfigData
     from collections import namedtuple
     import src.weather_class as weather_data_object
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
-def get_config() -> config_data:
+def get_config() -> ConfigData:
     """
     Get the config from a json file and return an object class of that data.
     """
-    location = r'config.json'
-    alist = ["~../src/config.json",
-             "~../config.json",
-             "~src/config.json",
-             "~config.json",
-             "config.json",
-             "~anemometer/src/config.json",
-             "~/anemometer/src/config.json",
-             "~opt/anemometer/src/config.json",
-             "~/opt/anemometer/src/config.json",
-             "~../opt/anemometer/src/config.json",
-             "not this"
-             "~../../opt/anemometer/src/config.json",
-             "above this"
-             "~../../../opt/anemometer/src/config.json",
-             "~../../../~/opt/anemometer/src/config.json",
-             ]
-    for i in range(0, len(alist), 1):
-        print("check json file location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
-    config_data_object = config_data()
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    print("---You are here -- {}".format(dir_path))
-    if location.lower().endswith('.json'):
-        try:
-            print("--This is the path -- {} - {}".format(os.path.isfile(location), os.path.exists(location)))
-            with open(location, 'r') as fileObject:
-                data = json.load(fileObject)
-            config_data_object.set_path(data["path"])
-            config_data_object.set_logging_path(data["logging_path"])
-            config_data_object.set_log_filename(data["log_filename"])
-            config_data_object.set_data_location(data["data_path"])
-            config_data_object.set_server_port(data["simple-server-port"])
-            config_data_object.set_logging_level(["logging-level"])
-        except FileExistsError or FileExistsError as err:
-            logging.error("Getting config error: " + str(err))
-    else:
-        print("was expecting json as a config file")
-        config_data_object.set_path()
-        config_data_object.set_logging_path()
-        config_data_object.set_log_filename()
-        config_data_object.set_data_location()
-        config_data_object.set_server_port()
-        config_data_object.set_logging_level()
-    logging.debug('We found these configs: ' + str(config_data_object.show_all()))
-    print("All config data: ", config_data_object.show_all())
-    return config_data_object
+    ConfigData.error_trapping()
+    config_object = ConfigData()
 
-
-def listing_directory(page_name: str, default_directory='data/') -> str:
-    """
-    This lists all files in a specified directory,
-    then outputs it as a string of html tags, ready for rendering.
-    """
-    logging.debug("Listing directory accessed")
-
-    alist = list_file_directory(default_directory)
-    most_recent_file = get_newest_file(alist)
-    print("listing_directory() - {}".format(most_recent_file))
-    blist = row_major(alist, len(alist))
-    clist = html_table(blist)
-    c = ""
-    for cl in clist:
-        c += cl
-    start, end = create_html_page_wrapper(page_name)
-    return start + c + end
-
-
-def create_html_page_wrapper(name: str) -> tuple:
-    """
-    Need the start and end of a html page.
-    :return: str, str
-    """
-    logging.debug("create_html_page_wrapper with " + name)
-
-    title = "<!DOCTYPE html><head><title>" + name
-    title += "</title></head><body>"
-    end_tags = "</body></html>"
-    return title, end_tags
-
-
-def row_major(alist: list, sub_len: int) -> list:
-    """
-    Not quite sure of this yet
-    :param alist: list
-    :param sub_len: int
-    :return: list: output_list
-    """
-    for i in range(0, len(alist), sub_len):
-        output_list = alist[i:i + sub_len]
-        print("output: ", output_list)
-    return output_list
-
-
-def html_table(input_value) -> list:
-    """
-    This function takes values and places them in a html list
-    :param input_value:
-    :return list:
-    """
-    logging.debug("html_table")
-
-    output = ['<table>']
-    for sublist in input_value:
-        output.append('<tr><td>')
-        output.append('</td><td>'.join(sublist))
-        output.append('</td></tr>')
-    output.append('</table>')
-    return output
-
-
-def get_newest_file(input_list: list) -> str:
-    logging.debug("get_newest_file")
-
-    for value in range(-1, 30, 1):
-        check_day = datetime.datetime.now() - datetime.timedelta(value)
-        test_day = str(check_day)[0:10]+".txt"
-        if test_day in input_list:
-            output_date = test_day
-            logging.debug("Most current file: " + str(output_date))
-            return output_date
-        else:
-            logging.debug("Need to go back further in get_newest_file() to find newest file")
-    return "No file found"
-
-
-def list_file_directory(directory='data/') -> list:
-    """
-    Search through 'data' folder for all names of files and return them in a string. This will enable
-    the index.html file to list them safely for a browser
-    :param directory: str
-    :return: list
-    """
-    logging.debug("list_file_directory from directory: " + str(directory))
-    print("Directory passed: ", directory)
-    list_of_files = []
-    for a_file in os.listdir(directory):
-        extension = os.path.splitext(a_file)
-        if extension[1] == '.py':
-            list_of_files.append(extension[0])
-        else:
-            pass
-    return list_of_files
+    logging.debug('We found these configs: ' + str(config_object.show_all()))
+    print("All config data: ", config_object.show_all())
+    return config_object
 
 
 def get_yesterdays_date() -> str:
