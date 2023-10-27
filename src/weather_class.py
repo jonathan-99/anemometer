@@ -26,11 +26,7 @@ class WeatherData:
         self.eventTime = ""
         self.windSpeed = 0.0
 
-    def get_data(self) -> str:
-        """REVIEW: I would question why you would do this at all - you have an instance with attributes..."""
-        return self.eventTime, self.windSpeed
-
-    def ToString(self) -> str:
+    def to_string(self) -> str:
         return f"{self.eventTime},{self.windSpeed}"
 
     def __str__(self):

@@ -12,6 +12,8 @@ try:
     from src.class_file import ConfigData
     from collections import namedtuple
     import src.weather_class as weather_data_object
+    import src.file_handler_class as file_handler_class
+    import src.date_checking_class as date_checking_class
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -27,6 +29,11 @@ def get_config() -> ConfigData:
     logging.debug('We found these configs: ' + str(config_object.show_all()))
     print("All config data: ", config_object.show_all())
     return config_object
+
+
+def file_handler(time, speed, filename):
+    file_handler_object = file_handler_class.FileHandlerClass(filename)
+    file_handler_object.append_specific_file_with_singular_weather_data(time, speed, filename)
 
 
 def get_yesterdays_date() -> str:
@@ -61,75 +68,14 @@ def create_weather_list(in_str: str) -> weather_data_object:
     return output_list
 
 
-def file_handler(time_stamp: str, speed: float, filename='data/file.txt') -> str:
+def iterate_through_list_for_good_datetime(in_list: list) -> list:
     """
-    Open a file in "data" folder and add a time (now) and wind speed only.
-    This function does not check vailidty of data.
-    This function does not accept lists of multiple weatherData.
-    :param: time_stamp(2022-07-26 21): str
-    :param: speed(12.2): float
-    :param: filename(data/2022-07-26): str
-    :return: string("True" or Error message as str): str
+    Take a list of datetimes and correct against a regex, before returning the corrected list
+    :in_list: list: input list
     """
-    logging.debug("file_handler()")
-
-    try:
-        logging.debug(f"Opening file, " + str(filename))
-        print("file opening - {}".format(filename))
-        with open(filename, 'a+') as fileObject:
-            print("file_handler() - type {} - speed {}".format(type(speed), speed))
-            fileObject.write(f"{time_stamp},{speed},\n")
-            logging.debug(f'File added to in file_handler()')
-    except FileExistsError or FileNotFoundError as err:
-        return_string = 'Exception error in file_handler() - {}'.format(str(err))
-        logging.error(return_string, exc_info=True)
-        return return_string
-    return "True"
-
-
-def read_in_data(filename: str) -> list:
-    """
-    Read in data from csv file.
-    """
-    logging.debug("Read_in_data from " + filename)
-
-    output = []
-    try:
-        file = open(filename)
-        reader = csv.reader(file)
-        for each_row in reader:
-            output.append(each_row)
-        file.close()
-    except Exception as err:
-        logging.error("Reading in csv data error: " + str(err))
-    return output
-
-
-def handle_input_list_datetime(in_list: list,
-                               input_regex='([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])') -> list:
-    """
-    If the datetime is not correct format such as "YY-MM-DD H:m:s.xxx" then it will convert it to the correct.
-
-    This will create duplicates of HOURS and need to be resolved.
-    This needs to extract the date regex out to config.
-
-    :param: input_list (list) : description
-    :param: correct_date_regex (str) : description
-    :param: incorrect_date_regex (str) : description
-    :return: input_list (list) : description
-    """
-    correct_date_regex = '([0-9][0-9])-([0-9][0-9])-([0-9][0-9]) ([0-9][0-9])'
-    incorrect_date_regex = '([0-9]+-[0-9]+-[0-9]+ [0-9]+):([0-9]+):([0-9]+)'
-
-    p = re.compile(correct_date_regex)
-    for count, value in enumerate(in_list):
-        m = p.match(value)
-        if m:
-            pass
-        else:
-            result = value.split('.')[0].split(':')[0]
-            in_list[count] = result
-    return in_list
+    date_checking_object = date_checking_class.DateCheckingClass
+    output_list = date_checking_object.correct_datetime_against_regex(in_list)
+    return output_list
 
 
 def split_list(input_list: list):  # how to declare two list returns?
