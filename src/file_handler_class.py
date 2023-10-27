@@ -38,8 +38,11 @@ class FileHandlerClass:
             with open(filename, 'a+') as fileObject:
                 fileObject.write(f"{time_stamp},{speed},\n")
                 logging.debug(f'File added to in file_handler()')
-        except FileExistsError or FileNotFoundError as err:
-            logging.error('Exception error in file_handler() - {}'.format(str(err)), exc_info=True)
+        except FileExistsError or FileNotFoundError as err_1:
+            logging.error('Exception error in file_handler() - {}'.format(str(err_1)), exc_info=True)
+        except Exception as err_2:
+            logging.error('Unknown exception error in file_handler() - {}'.format(str(err_2)), exc_info=True)
+
 
 
     def read_specific_weather_file(self, filename="data/2022-07-26.txt") -> None:
