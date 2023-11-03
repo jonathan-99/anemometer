@@ -19,7 +19,8 @@ class ConfigData:
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
             with open(filename, 'a') as fileObject:
-                data = json.loads(fileObject)
+                injest = fileObject.read()
+                data = json.loads(injest)
             self._set_path(data["path"])
             self._set_logging_path(data["logging_path"])
             self._set_log_filename(data["log_filename"])
