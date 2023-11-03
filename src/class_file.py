@@ -20,7 +20,7 @@ class ConfigData:
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
             with open(filename, 'r') as fileObject:
-                injest = json.dumps(fileObject)
+                injest = json.load(fileObject)
                 data = ast.literal_eval(injest)
             print("Data contents: {}".format(data))
             self._set_path(data['path'])
