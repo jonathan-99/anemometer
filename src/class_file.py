@@ -16,10 +16,10 @@ class ConfigData:
 
 
     def __init__(self, filename='config.json'):
-        print("--This is the path -- {} - {}".format(os.path.isfile(filename), os.path.exists(filename)))
+        print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
             with open(filename, 'a') as fileObject:
-                data = json.load(fileObject)
+                data = json.loads(fileObject)
             self._set_path(data["path"])
             self._set_logging_path(data["logging_path"])
             self._set_log_filename(data["log_filename"])
