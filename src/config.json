@@ -1,5 +1,5 @@
 {
-  "path": "/opt/anemometer/",
+  "path": "//opt/anemometer/",
   "logging_path": "logging/",
   "log_filename" : "debugging.log",
   "data_path": "data/",

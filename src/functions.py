@@ -45,7 +45,7 @@ def get_config() -> ConfigData:
     Get the config from a json file and return an object class of that data.
     """
 
-    error_trapping()
+    # error_trapping()
     config_object = ConfigData()
 
     logging.debug('We found these configs: ' + str(config_object.show_all()))
