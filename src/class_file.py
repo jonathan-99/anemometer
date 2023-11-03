@@ -21,6 +21,7 @@ class ConfigData:
             with open(filename) as fileObject:
                 injest = fileObject.read()
                 data = json.loads(injest)
+                print("Data contents: {}".format(data))
             self._set_path(data["path"])
             self._set_logging_path(data["logging_path"])
             self._set_log_filename(data["log_filename"])
