@@ -18,7 +18,7 @@ class ConfigData:
     def __init__(self, filename='config.json'):
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
-            with open(filename, 'a') as fileObject:
+            with open(filename) as fileObject:
                 injest = fileObject.read()
                 data = json.loads(injest)
             self._set_path(data["path"])
