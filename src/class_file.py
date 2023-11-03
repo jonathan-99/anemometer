@@ -8,6 +8,7 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
+
 class ConfigData:
     """
     This holds and retrieves the config file for all other files to call on.
@@ -82,24 +83,3 @@ class ConfigData:
             + str(self.logging_level)
         return output_string
 
-    def error_trapping(self):
-        alist = ["~../src/config.json",
-                 "~../config.json",
-                 "~src/config.json",
-                 "~config.json",
-                 "config.json",
-                 "~anemometer/src/config.json",
-                 "~/anemometer/src/config.json",
-                 "~opt/anemometer/src/config.json",
-                 "~/opt/anemometer/src/config.json",
-                 "~../opt/anemometer/src/config.json",
-                 "not this"
-                 "~../../opt/anemometer/src/config.json",
-                 "above this"
-                 "~../../../opt/anemometer/src/config.json",
-                 "~../../../~/opt/anemometer/src/config.json",
-                 ]
-        for i in range(0, len(alist), 1):
-            print("check json file file_location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        print("---You are here -- {}".format(dir_path))

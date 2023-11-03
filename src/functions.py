@@ -18,12 +18,34 @@ except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
 
+def error_trapping():
+    alist = ["~../src/config.json",
+             "~../config.json",
+             "~src/config.json",
+             "~config.json",
+             "config.json",
+             "~anemometer/src/config.json",
+             "~/anemometer/src/config.json",
+             "~opt/anemometer/src/config.json",
+             "~/opt/anemometer/src/config.json",
+             "~../opt/anemometer/src/config.json",
+             "not this"
+             "~../../opt/anemometer/src/config.json",
+             "above this"
+             "~../../../opt/anemometer/src/config.json",
+             "~../../../~/opt/anemometer/src/config.json",
+             ]
+    for i in range(0, len(alist), 1):
+        print("check json file file_location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    print("---You are here -- {}".format(dir_path))
+
 def get_config() -> ConfigData:
     """
     Get the config from a json file and return an object class of that data.
     """
 
-    ConfigData.error_trapping()
+    error_trapping()
     config_object = ConfigData()
 
     logging.debug('We found these configs: ' + str(config_object.show_all()))
@@ -70,7 +92,27 @@ def create_weather_list(in_str: str) -> weather_data_object:
 
 def iterate_through_list_for_good_datetime(in_list: list) -> list:
     """
-    Take a list of datetimes and correct against a regex, before returning the corrected list
+    Take a list of datetimes and correct against a regex, before returning the corrected list    def error_trapping():
+        alist = ["~../src/config.json",
+                 "~../config.json",
+                 "~src/config.json",
+                 "~config.json",
+                 "config.json",
+                 "~anemometer/src/config.json",
+                 "~/anemometer/src/config.json",
+                 "~opt/anemometer/src/config.json",
+                 "~/opt/anemometer/src/config.json",
+                 "~../opt/anemometer/src/config.json",
+                 "not this"
+                 "~../../opt/anemometer/src/config.json",
+                 "above this"
+                 "~../../../opt/anemometer/src/config.json",
+                 "~../../../~/opt/anemometer/src/config.json",
+                 ]
+        for i in range(0, len(alist), 1):
+            print("check json file file_location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        print("---You are here -- {}".format(dir_path))
     :in_list: list: input list
     """
     date_checking_object = date_checking_class.DateCheckingClass

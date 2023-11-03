@@ -14,10 +14,10 @@ try:
     import os
     import sys
     import RPi.GPIO as GPIO
-    from src import functions
+    from src.functions import functions
     import time
     import logging
-    from src.class_file import config_data
+    from src.class_file import ConfigData as config_data
 except Exception as e:
     print("importing error: ", e)
 
