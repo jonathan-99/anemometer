@@ -20,7 +20,7 @@ class ConfigData:
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
             with open(filename, 'r') as fileObject:
-                injest = json.load(fileObject)
+                injest = str(json.load(fileObject))
                 print("Injest - {} - {}".format(str(injest)[0-10], injest))
                 data = ast.literal_eval(injest)
             print("Data contents: {}".format(data))
@@ -34,7 +34,7 @@ class ConfigData:
             logging.error("Getting config error: " + str(err))
             self.set_all_default()
         except json.decoder.JSONDecodeError as err_1:
-            logging.error("Error. Possibly you have a special character - {} - {}".format(err_1, str(injest)))
+            logging.error("Error. Possibly you have a special character - {} - {}".format(err_1))
             self.set_all_default()
 
     def _set_path(self, path_location="/opt/anemometer/") -> None:
