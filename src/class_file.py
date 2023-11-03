@@ -34,7 +34,7 @@ class ConfigData:
             logging.error("Getting config error: " + str(err))
             self.set_all_default()
         except json.decoder.JSONDecodeError as err_1:
-            logging.error("Error. Possibly you have a special character - {}".format(err_1))
+            logging.error("Error. Possibly you have a special character - {} - {}".format(err_1), injest)
             self.set_all_default()
 
     def _set_path(self, path_location="/opt/anemometer/") -> None:
