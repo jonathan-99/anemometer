@@ -19,8 +19,8 @@ class ConfigData:
     def __init__(self, filename='config.json'):
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
-            with open(filename, 'r') as fileObject:
-                injest = str(json.load(fileObject))
+            with open(filename, 'r', encoding="utf-8") as fileObject:
+                injest = json.load(fileObject)
                 print("Injest - {} - {}".format(str(injest)[0-10], injest))
                 data = ast.literal_eval(injest)
             print("Data contents: {}".format(data))
