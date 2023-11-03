@@ -21,6 +21,7 @@ class ConfigData:
         try:
             with open(filename, 'r') as fileObject:
                 injest = json.load(fileObject)
+                print("Injest - {} - {}".format(str(injest)[0-10], injest))
                 data = ast.literal_eval(injest)
             print("Data contents: {}".format(data))
             self._set_path(data['path'])
