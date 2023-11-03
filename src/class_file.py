@@ -18,10 +18,9 @@ class ConfigData:
     def __init__(self, filename='config.json'):
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
-            with open(filename) as fileObject:
-                injest = fileObject.read()
-                data = json.loads(injest)
-                print("Data contents: {}".format(data))
+            with open(filename, 'r') as fileObject:
+                data = json.loads(fileObject.read())
+            print("Data contents: {}".format(data))
             self._set_path(data["path"])
             self._set_logging_path(data["logging_path"])
             self._set_log_filename(data["log_filename"])
@@ -30,6 +29,9 @@ class ConfigData:
             self._set_logging_level(["logging-level"])
         except FileExistsError or FileExistsError as err:
             logging.error("Getting config error: " + str(err))
+            self.set_all_default()
+        except json.decoder.JSONDecodeError as err_1:
+            logging.error("Error. Possibly you have a special character - {}".format(err_1))
             self.set_all_default()
 
     def _set_path(self, path_location="/opt/anemometer/") -> None:
