@@ -4,6 +4,7 @@ try:
     import csv
     import json
     import logging
+    import ast
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -19,14 +20,14 @@ class ConfigData:
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
         try:
             with open(filename, 'r') as fileObject:
-                data = json.loads(fileObject.read())
+                data = ast.literal_eval(fileObject.read())
             print("Data contents: {}".format(data))
-            self._set_path(data["path"])
-            self._set_logging_path(data["logging_path"])
-            self._set_log_filename(data["log_filename"])
-            self._set_data_location(data["data_path"])
-            self._set_server_port(data["simple-server-port"])
-            self._set_logging_level(["logging-level"])
+            self._set_path(data['path'])
+            self._set_logging_path(data['logging_path'])
+            self._set_log_filename(data['log_filename'])
+            self._set_data_location(data['data_path'])
+            self._set_server_port(data['simple-server-port'])
+            self._set_logging_level(['logging-level'])
         except FileExistsError or FileExistsError as err:
             logging.error("Getting config error: " + str(err))
             self.set_all_default()
