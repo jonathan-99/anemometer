@@ -5,6 +5,7 @@ try:
     import json
     import logging
     import ast
+    import file_handler_class as filehander
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -18,24 +19,20 @@ class ConfigData:
 
     def __init__(self, filename='config.json'):
         print("--This is the path -- {} - {} - {}".format(os.path.isfile(filename), os.path.exists(filename), filename))
-        try:
-            with open(filename, 'r', encoding="utf-8") as fileObject:
-                injest = json.load(fileObject)
-                print("Injest - {} - {}".format(str(injest)[0-10], injest))
-                data = ast.literal_eval(injest)
-            print("Data contents: {}".format(data))
+
+        fileObject = filehander.FileHandlerClass(filename)
+        data = fileObject.read_json_data_from_file(filename)
+        print("Error trapping: {} - {}".format(type(data), data))
+        if "Error" in data:
+            self.set_all_default()
+        else:
             self._set_path(data['path'])
             self._set_logging_path(data['logging_path'])
             self._set_log_filename(data['log_filename'])
             self._set_data_location(data['data_path'])
             self._set_server_port(data['simple-server-port'])
             self._set_logging_level(data['logging-level'])
-        except FileExistsError or FileExistsError as err:
-            logging.error("Getting config error: " + str(err))
-            self.set_all_default()
-        except json.decoder.JSONDecodeError as err_1:
-            logging.error("Error. Possibly you have a special character - {}".format(err_1))
-            self.set_all_default()
+
 
     def _set_path(self, path_location="/opt/anemometer/") -> None:
         self.path = path_location

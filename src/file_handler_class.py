@@ -5,6 +5,7 @@ try:
     import json
     import logging
     import src.weather_class as weather_class
+    import ast
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
@@ -79,3 +80,25 @@ class FileHandlerClass:
 
     def get_files_in_directory(self) -> list:
         return self.files_in_directory
+
+    def read_json_data_from_file(self, filename: str) -> json:
+        """
+        This reads data from an expected to be json file and passes the json out. There is an issue with handling
+        special characters in the json, using dumps with a argument of "ensure_ascci=False" rather than laods.
+        :filename: str
+        :data: json
+        """
+        try:
+            with open(filename, 'r', encoding="utf-8") as fileObject:
+                injest = json.dumps(fileObject, ensure_ascci=False) # or .encode('ascci')
+                print("Injest - {} - {}".format(str(injest)[0-10], injest))
+                data = ast.literal_eval(injest)
+            print("Data contents: {}".format(data))
+            return data
+        except FileExistsError or FileExistsError as err:
+            logging.error("Getting config error: " + str(err))
+            return {"Error:": str(err)}
+        except json.decoder.JSONDecodeError as err_1:
+            # this is an indication of special characters within the json file
+            logging.error("Error. JSONDecodeError. Possibly you have a special character - {}".format(err_1))
+            return {"Error:": str(err_1)}
