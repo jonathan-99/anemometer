@@ -90,7 +90,7 @@ class FileHandlerClass:
         """
         try:
             with open(filename, 'r', encoding="utf-8") as fileObject:
-                injest = json.dumps(fileObject, ensure_ascci=False) # or .encode('ascci')
+                injest = json.dumps(fileObject, ensure_ascii=False) # or .encode('ascci') or ensure_ascii=False
                 print("Injest - {} - {}".format(str(injest)[0-10], injest))
                 data = ast.literal_eval(injest)
             print("Data contents: {}".format(data))
