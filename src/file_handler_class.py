@@ -94,7 +94,7 @@ class FileHandlerClass:
                 # temp_injest = json.dumps(obj=fileObject) # or .encode('ascii') or ensure_ascii=False
                 injest = ast.literal_eval(fileObject.read())
                 print("Injest - {} - {}".format(str(injest)[0-10], injest))
-                data = ast.literal_eval(injest)
+                data = injest
             print("Data contents: {}".format(data))
             return data
         except FileExistsError or FileExistsError as err:
