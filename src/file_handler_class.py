@@ -93,9 +93,9 @@ class FileHandlerClass:
             with open(filename, 'r', encoding="utf-8") as fileObject:
                 temp_injest = json.dumps(obj=fileObject.read()) # or .encode('ascii') or ensure_ascii=False
                 print("Temp injest - {} - {}".format(type(temp_injest), temp_injest))
-                injest = ast.literal_eval(temp_injest)
-                print("Injest - {} - {}".format(str(injest)[0-10], injest))
-                data = injest
+                # injest = ast.literal_eval(temp_injest)
+                print("Next Injest - {} - {}".format(str(temp_injest)[0-10], temp_injest))
+                data = temp_injest
             print("Data contents: {}".format(data))
             return data
         except FileExistsError or FileExistsError as err:
