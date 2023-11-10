@@ -14,7 +14,7 @@ try:
     import os
     import sys
     import RPi.GPIO as GPIO
-    from src import functions as functions
+    import src.functions as functions
     import time
     import logging
     from src.class_file import ConfigData
