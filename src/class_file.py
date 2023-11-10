@@ -26,6 +26,9 @@ class ConfigData:
         if "error" in str(data).lower():
             self.set_all_default()
             print("__init__ if default")
+        elif not data:
+            self.set_all_default()
+            print("__init__ elif empty")
         else:
             print("__init__ else - {}".format(data))
             self._set_path(data['path'])
