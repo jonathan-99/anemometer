@@ -5,7 +5,7 @@ try:
     import json
     import logging
     import ast
-    import file_handler_class as filehander
+    import src.file_handler_class as filehander
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
 
