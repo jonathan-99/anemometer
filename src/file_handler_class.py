@@ -92,7 +92,7 @@ class FileHandlerClass:
         try:
             with open(filename, 'r', encoding="utf-8") as fileObject:
                 # temp_injest = json.dumps(obj=fileObject) # or .encode('ascii') or ensure_ascii=False
-                injest = ast.literal_eval(fileObject.read())
+                injest = ast.literal_eval(next(fileObject.read(), '()'))
                 print("Injest - {} - {}".format(str(injest)[0-10], injest))
                 data = injest
             print("Data contents: {}".format(data))
