@@ -89,7 +89,7 @@ class FileHandlerClass:
         :data: json
         """
         try:
-            with open(filename, 'r', encoding="utf-8") as fileObject:
+            with open(filename, 'r+', encoding="utf-8") as fileObject:
                 temp_injest = json.loads(fileObject.read()) # or .encode('ascii') or ensure_ascii=False
                 print("Temp injest - {} - {}".format(type(temp_injest), temp_injest))
                 # injest = ast.literal_eval(temp_injest)
