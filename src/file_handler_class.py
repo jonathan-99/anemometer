@@ -88,14 +88,13 @@ class FileHandlerClass:
         :filename: str
         :data: json
         """
-        temp_injest = ""
         try:
             with open(filename, 'r', encoding="utf-8") as fileObject:
                 temp_injest = json.loads(fileObject.read()) # or .encode('ascii') or ensure_ascii=False
                 print("Temp injest - {} - {}".format(type(temp_injest), temp_injest))
                 # injest = ast.literal_eval(temp_injest)
                 print("Next Injest - {}".format(temp_injest))
-                print("Next Injest - {}".format(str(temp_injest)[0 - 10]))
+                print("Next 1 Injest - {}".format(str(temp_injest)[0 - 10]))
                 data = temp_injest
             print("Data contents: {}".format(data))
             return data
