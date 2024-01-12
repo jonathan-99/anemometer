@@ -89,10 +89,14 @@ class FileHandlerClass:
         :data: json
         """
         try:
-            with open(filename, 'r', encoding="utf-8") as fileObject:
-                injest = json.dumps(fileObject, ensure_ascii=False) # or .encode('ascci') or ensure_ascii=False
-                print("Injest - {} - {}".format(str(injest)[0-10], injest))
-                data = ast.literal_eval(injest)
+            # with open(filename, 'r+', encoding="utf-8") as fileObject:
+            data = [json.loads(line) for line in open(filename, 'r')]
+            #    temp_injest = json.loads(fileObject.read()) # or .encode('ascii') or ensure_ascii=False
+            #    print("Temp injest - {} - {}".format(type(temp_injest), temp_injest))
+                # injest = ast.literal_eval(temp_injest)
+            #    print("Next Injest - {}".format(temp_injest))
+            #    print("Next 1 Injest - {}".format(str(temp_injest)[0 - 10]))
+            #    data = temp_injest
             print("Data contents: {}".format(data))
             return data
         except FileExistsError or FileExistsError as err:
@@ -101,4 +105,4 @@ class FileHandlerClass:
         except json.decoder.JSONDecodeError as err_1:
             # this is an indication of special characters within the json file
             logging.error("Error. JSONDecodeError. Possibly you have a special character - {}".format(err_1))
-            return {"Error:": str(err_1)}
+            return {"Error 1:": str(err_1)}

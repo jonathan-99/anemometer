@@ -23,9 +23,14 @@ class ConfigData:
         fileObject = filehander.FileHandlerClass(filename)
         data = fileObject.read_json_data_from_file(filename)
         print("Error trapping: {} - {}".format(type(data), data))
-        if "Error" in data:
+        if "error" in str(data).lower():
             self.set_all_default()
+            print("__init__ if default")
+        elif not data:
+            self.set_all_default()
+            print("__init__ elif empty")
         else:
+            print("__init__ else - {}".format(data))
             self._set_path(data['path'])
             self._set_logging_path(data['logging_path'])
             self._set_log_filename(data['log_filename'])
