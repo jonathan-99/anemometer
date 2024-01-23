@@ -5,10 +5,10 @@
 // anemometer project.
 
 pipeline {
-    agent {
-        docker {
-            image 'python:3.8'
-        }
+    agent any
+    environment {
+        PYTHON_HOME = tool 'Python3'
+        PATH = "$PYTHON_HOME/bin:$PATH"
     }
     stages {
         stage('setup 1') {
@@ -29,18 +29,6 @@ pipeline {
                         rm -rf anemometer
                         git clone https://github.com/jonathan-99/anemometer.git
                     """
-                }
-            }
-        }
-        stage('setup 2') {
-            steps {
-                script {
-                    echo "Installing coverage"
-                    withEnv(['PATH+PYTHON=/usr/bin/python3']) {
-                        sh """
-                            pip install coverage
-                        """
-                    }
                 }
             }
         }
