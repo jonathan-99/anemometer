@@ -25,7 +25,7 @@
                         try {
                             echo "doing unittests"
                             sh """
-                                python3 -m unittest -s testing/ -v __init__.Testing
+                                python3 -m unittest -s 'testing/' -v test_all.Testing
                             """
                         } catch(err) {
                             echo "There was an error in unittests $err"
