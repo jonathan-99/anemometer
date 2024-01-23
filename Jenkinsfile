@@ -8,7 +8,7 @@
     pipeline {
         agent any
         stages {
-            stage('setup') {
+            stage('setup 1') {
             steps {
                 script {
 
@@ -18,7 +18,6 @@
                     """
                 }
             }
-        }
             stage('download') {
                 steps {
                     script {
@@ -30,18 +29,18 @@
                     }
                 }
             }
-            stage('setup') {
-            steps {
-                script {
-                    echo "Installing coverage"
-                    withEnv(['PATH+PYTHON=/usr/bin/python3']) {
-                        sh """
-                            pip install coverage
-                        """
+            stage('setup 2') {
+                steps {
+                    script {
+                        echo "Installing coverage"
+                        withEnv(['PATH+PYTHON=/usr/bin/python3']) {
+                            sh """
+                                pip install coverage
+                            """
+                        }
                     }
                 }
             }
-        }
             stage('unittest') {
                 steps {
                     script {
