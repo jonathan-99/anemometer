@@ -14,6 +14,7 @@
                         echo "git download"
                         sh """
                             git --version
+                            rm -rf anemometer
                             git clone https://github.com/jonathan-99/anemometer.git
                         """
                     }
