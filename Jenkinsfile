@@ -5,7 +5,11 @@
 // anemometer project.
 
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.8'
+        }
+    }
     stages {
         stage('setup 1') {
             steps {
