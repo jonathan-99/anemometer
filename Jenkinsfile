@@ -11,12 +11,7 @@
             stage('setup') {
             steps {
                 script {
-                    echo "Installing coverage"
-                    withEnv(['PATH+PYTHON=/usr/bin/python3']) {
-                        sh """
-                            pip install coverage
-                        """
-                    }
+
                     echo "check git version"
                     sh """
                         git --version
@@ -35,6 +30,18 @@
                     }
                 }
             }
+            stage('setup') {
+            steps {
+                script {
+                    echo "Installing coverage"
+                    withEnv(['PATH+PYTHON=/usr/bin/python3']) {
+                        sh """
+                            pip install coverage
+                        """
+                    }
+                }
+            }
+        }
             stage('unittest') {
                 steps {
                     script {
