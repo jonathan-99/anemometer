@@ -25,11 +25,9 @@ class FileHandlerClass:
         return self.weatherDataList
 
     @staticmethod
-    def append_specific_file_with_singular_weather_data(time_stamp, speed,
-                                                        filename='data/2022-07-26.txt') -> None:
+    def append_specific_file_with_singular_weather_data(time_stamp, speed, filename='data/2022-07-26.txt') -> None:
         logging.debug(f"Opening file, {filename}")
         try:
-            print(f"file_handler({filename}) - type {type(speed)} - speed {speed}")
             with open(filename, 'a+') as fileObject:
                 fileObject.write(f"{time_stamp},{speed},\n")
                 logging.debug('File added to in file_handler()')
