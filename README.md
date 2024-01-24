@@ -176,7 +176,7 @@ sudo systemctl start anemometer.service
 ```
 In order to check the journal entries use:
 ```commandline
-journalmd
+journalctl -n 30
 ```
 
 ## Description on architecture

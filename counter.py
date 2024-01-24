@@ -100,7 +100,7 @@ def execute(wind_object) -> None:
     speed = calculate_speed(wind_object.show_count(), wind_object.get_interval())
     logging.debug(f"Ticks second count: " + str(wind_object.show_count()) + " speed " + str(speed))
     timestamp = get_time_stamp_for_filename()
-    filename = "data/" + timestamp
+    filename = "data/" + timestamp + ".txt"
     functions.file_handler(get_time_stamp(), speed, filename)
     logging.debug(f"For the last " + str(wind_object.interval/60) + "mins, the speed has been: " + str(speed))
     wind_object.reset()
