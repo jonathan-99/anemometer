@@ -31,6 +31,7 @@ class ConfigData:
             logging.error("Error reading JSON file: {}".format(err))
             return {"Error": "Invalid JSON format or empty file"}
 
+
     def __init__(self, filename='config.json'):
         logging.debug("--This is the path -- {} - {} - {}".format(os.path.isfile(filename),
                                                                   os.path.exists(filename), filename))
