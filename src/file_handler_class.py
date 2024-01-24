@@ -17,6 +17,7 @@ class FileHandlerClass:
         self.directory = None
         self.files_in_directory = []
         self.weatherDataList = []
+        logging.debug("FileHandlerClass initiated")
 
     def _append_weather_data_singular_to_list(self, time, speed) -> None:
         self.weatherDataList.append((time, speed))
@@ -37,6 +38,7 @@ class FileHandlerClass:
             logging.error(f'Unknown exception error in file_handler() - {str(err_2)}', exc_info=True)
 
     def read_specific_weather_file(self, filename="data/2022-07-26.txt") -> None:
+        logging.debug("read_specific_weather_file()")
         try:
             with open(filename, 'r') as fileObject:
                 input_data = fileObject.read()
@@ -44,8 +46,15 @@ class FileHandlerClass:
                 for i in range(0, len(input_data), 2):
                     self._append_weather_data_singular_to_list(input_data[i], input_data[i + 1])
                 logging.debug(f"read_specific_weather_file({filename})")
-        except (FileExistsError, FileNotFoundError) as err:
-            logging.error(f'Exception error in file_handler() - {str(err)}', exc_info=True)
+        except (FileExistsError) as err_1:
+            error = str(os.listdir('.'))
+            logging.error(f'FileExistsError in file_handler() - {str(err_1)} - {error}', exc_info=True)
+        except (FileNotFoundError) as err_2:
+            error = str(os.listdir('.'))
+            logging.error(f'FileNotFoundError in file_handler() - {str(err_2)} - {error}', exc_info=True)
+        except Exception as err:
+            error = str(os.listdir('.'))
+            logging.error(f'Randon exception error in file_handler() - {str(err)} - {error}', exc_info=True)
 
     def read_specific_csv_file(self, filename) -> None:
         self.filename = filename
@@ -56,8 +65,15 @@ class FileHandlerClass:
                 for i, row in enumerate(csv_reader):
                     if i % 2 == 0:
                         self._append_weather_data_singular_to_list(row[0], row[1])
+        except (FileExistsError) as err_1:
+            error = str(os.listdir('.'))
+            logging.error(f'FileExistsError in file_handler() - {str(err_1)} - {error}', exc_info=True)
+        except (FileNotFoundError) as err_2:
+            error = str(os.listdir('.'))
+            logging.error(f'FileNotFoundError in file_handler() - {str(err_2)} - {error}', exc_info=True)
         except Exception as err:
-            logging.error(f"Reading in csv data error: {str(err)}")
+            error = str(os.listdir('.'))
+            logging.error(f'Randon exception error in file_handler() - {str(err)} - {error}', exc_info=True)
 
     def add_files_in_directory(self, directory='data/') -> list:
         for a_file in os.listdir(directory):
