@@ -14,9 +14,11 @@ pipeline {
         stage('setup 1') {
             steps {
                 script {
-                    echo "check git version"
+                    echo "check git, groovy and pip version"
                     sh """
                         git --version
+                        pip -V
+                        groovy -version
                     """
                 }
             }
