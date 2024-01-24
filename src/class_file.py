@@ -5,26 +5,31 @@ try:
     import json
     import logging
     import ast
-    import logging
 except ImportError as e:
-    sys.exit("Importing error: " + str(e))
-    # this needs to have logging added.
+    logging.debug("Importing error: " + str(e))
 
 
 class ConfigData:
     """
     This holds and retrieves the config file for all other files to call on.
     """
+
     @staticmethod
-    def read_json_data_from_file(filename: str) -> json:
+    def read_json_data_from_file(filename: str) -> dict:
+        logging.debug("read_json_data_from_file({})".format(filename))
         try:
             with open(filename, 'r', encoding="utf-8") as fileObject:
                 data = json.load(fileObject)
-                print("Data contents: {}".format(data))
+                logging.debug("read_json_data_from_file() - data contents: {}".format(data))
                 return data
-        except (FileNotFoundError, json.decoder.JSONDecodeError) as err:
+        except FileNotFoundError:
+            logging.warning("current files - {} ".format(os.listdir('.')))
+            logging.warning("JSON file not found: {}".format(filename))
+            return {"Error": "File not found"}
+        except json.decoder.JSONDecodeError as err:
+            logging.warning("current files - {} ".format(os.listdir('.')))
             logging.error("Error reading JSON file: {}".format(err))
-            return {"Error": str(err)}
+            return {"Error": "Invalid JSON format or empty file"}
 
     def __init__(self, filename='config.json'):
         logging.debug("--This is the path -- {} - {} - {}".format(os.path.isfile(filename),
