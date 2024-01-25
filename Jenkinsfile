@@ -7,7 +7,7 @@
 pipeline {
     agent any
     environment {
-        PYTHON_HOME = tool 'Python3'
+        PYTHON_HOME = tool 'Python'
         PATH = "$PYTHON_HOME/bin:$PATH"
     }
     stages {
