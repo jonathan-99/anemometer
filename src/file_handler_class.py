@@ -1,20 +1,27 @@
-import os
-import csv
-import json
-import logging
+
 
 try:
     import src.weather_class as weather_class
     import ast
+    import os
+    import csv
+    import json
+    import logging
+    import src.class_file as ConfigData
+
 except Exception as e:
     logging.error("Importing packages error: {}".format(e))
 
 
 class FileHandlerClass:
 
+    def _get_config_path(self) -> str:
+        config_object = ConfigData.ConfigData('opt/anemomenter/config.json')
+        return str(config_object.get_path())
+
     def __init__(self, name: str) -> None:
         self.filename = name
-        self.directory = None
+        self.directory = self._get_config_path()
         self.files_in_directory = []
         self.weatherDataList = []
         logging.debug("FileHandlerClass initiated")
@@ -25,11 +32,10 @@ class FileHandlerClass:
     def get_weather_data_list(self) -> list:
         return self.weatherDataList
 
-    @staticmethod
-    def append_specific_file_with_singular_weather_data(time_stamp, speed, filename='data/2022-07-26.txt') -> None:
-        logging.debug(f"Opening file, {filename}")
+    def append_specific_file_with_singular_weather_data(self, time_stamp, speed, filename='data/2022-07-26.txt') -> None:
+        logging.debug(f"Opening file {filename} with absolute path {self.directory}.")
         try:
-            with open(filename, 'a+') as fileObject:
+            with open(self.directory + filename, 'a+') as fileObject:
                 fileObject.write(f"{time_stamp},{speed},\n")
                 logging.debug('File added to in file_handler()')
         except (FileExistsError, FileNotFoundError) as err_1:
