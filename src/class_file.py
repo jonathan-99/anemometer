@@ -31,7 +31,6 @@ class ConfigData:
             logging.error("Error reading JSON file: {}".format(err))
             return {"Error": "Invalid JSON format or empty file"}
 
-
     def __init__(self, filename='config.json'):
         logging.debug("--This is the path -- {} - {} - {}".format(os.path.isfile(filename),
                                                                   os.path.exists(filename), filename))
@@ -67,7 +66,7 @@ class ConfigData:
     def _set_server_port(self, number=6000) -> None:
         self.server_port = number
 
-    def _set_logging_level(self, log_level="logging.DEBUG") -> None:
+    def _set_logging_level(self, log_level="logging.debug") -> None:
         self.logging_level = log_level
 
     def get_path(self) -> str:
