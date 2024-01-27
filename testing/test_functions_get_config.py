@@ -1,14 +1,17 @@
-import src.functions as functions
+from src.class_file import ConfigData
 import unittest
 class testGetConfig(unittest.TestCase):
     def test_get_config(self):
-        test_config = functions.get_config()
+        """
+        need testing config location
+        """
+        configObject = ConfigData
         with self.subTest():
-            self.assertEqual(test_config.get_logging_path(), 'logging/')
+            self.assertEqual(configObject.get_logging_path(), 'logging/')
         with self.subTest():
-            self.assertEqual(test_config.get_log_filename(), 'debugging.log')
+            self.assertEqual(configObject.get_log_filename(), 'debugging.log')
         with self.subTest():
-            self.assertIsInstance(test_config.show_all(), str)
+            self.assertIsInstance(configObject.show_all(), str)
 
 if __name__ == '__main__':
     unittest.main()

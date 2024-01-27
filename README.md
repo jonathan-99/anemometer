@@ -168,7 +168,16 @@ at the bottom. Remember to
 
 ```sudo chmod +x run_script.sh```
 
- 
+## Running as a systemctl service.
+The service file = "anemometer.service" must be saved in = "/etc/systemd/system/"
+then the following command can be used:
+```commandline
+sudo systemctl start anemometer.service
+```
+In order to check the journal entries use:
+```commandline
+journalctl -n 30
+```
 
 ## Description on architecture
 
