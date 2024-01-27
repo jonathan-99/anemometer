@@ -4,21 +4,17 @@
 // This file is designed to provide a jenkins instance with a pipeline to download, unittest, coverage test this
 // anemometer project.
 
+// note jenkins / pipeline doesn't like running python through groovy, so they're extracted to
+
 pipeline {
     agent any
-    environment {
-        PYTHON_HOME = tool 'Python'
-        PATH = "$PYTHON_HOME/bin:$PATH"
-    }
     stages {
         stage('setup 1') {
             steps {
                 script {
                     echo "check git, groovy and pip version"
                     sh """
-                        git --version
-                        pip -V
-                        groovy -version
+                        ./jenkins_scripts/setup_checks.sh
                     """
                 }
             }
@@ -39,9 +35,8 @@ pipeline {
                 script {
                     try {
                         echo "doing unittests"
-                        // change to 'test_*' for full output
                         sh """
-                            python3 -m unittest discover -s 'testing/' -v -p 'test_all.py'
+                            ./jenkins_scripts/do_unittests.sh
                         """
                     } catch(err) {
                         echo "There was an error in unittests $err"
@@ -54,10 +49,7 @@ pipeline {
                 script {
                     try {
                         echo "coverage report"
-                        sh """
-                            coverage run -m unittest discover -s 'testing/' -v -p 'test_all.py'
-                            coverage html -d coverage_report
-                        """
+                        ./jenkins_scripts/do_unittests.sh
                     } catch(err) {
                         echo "There was an error in coverage report $err"
                     }
