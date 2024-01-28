@@ -94,6 +94,8 @@ def execute(wind_object) -> None:
     """
     This function executes until either user interruption or until the interval in seconds completes.
     """
+    import logging
+    import time
     logging.debug(f'Ticks first count: ' + str(wind_object.show_count()) + str(datetime.datetime.now()))
 
     time.sleep(wind_object.get_interval())
