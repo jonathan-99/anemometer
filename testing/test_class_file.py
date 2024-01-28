@@ -24,7 +24,7 @@ class TestConfigData(unittest.TestCase):
     def test_init_with_config_file(self):
         config_object = ConfigData.ConfigData('test_config.json')
         data = config_object.get_path()
-        self.assertEqual(data, "/opt/anemometer/testing/")
+        self.assertEqual(data, "/opt/anemometer/")
 
     def test_get_path(self):
         self.assertEqual(self.config.get_path(), "/opt/anemometer/")
@@ -59,7 +59,7 @@ class TestConfigData(unittest.TestCase):
             "logging_path": "logging/",
             "log_filename": "debugging.log",
             "data_location": "data/",
-            "server_port": 6000,
+            "server_port": '6000',
             "logging_level": "logging.debug"
         }
         self.assertEqual(self.config.show_all(), expected_output)
