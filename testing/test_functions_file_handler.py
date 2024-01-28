@@ -29,6 +29,7 @@ class TestFileHandler(unittest.TestCase):
         self.test_good_time = "22-06-16 22"
         self.test_good_speed = 12.9
 
+
     def tearDown(self):
         for filename in [self.test_good_filename, self.test_bad_filename, self.test_csv_filename,
                          self.test_json_filename]:
@@ -64,10 +65,19 @@ class TestFileHandler(unittest.TestCase):
             os.remove(self.test_bad_filename)
 
     def test_append_specific_file_with_singular_weather_data(self):
-        with patch('builtins.open', create=True) as mock_open:
-            with patch.object(filehandlerclass, 'append_specific_file_with_singular_weather_data'):
-                filehandlerclass.append_specific_file_with_singular_weather_data('22-06-16 22', 12.3)
-                mock_open.assert_called_once_with(self.test_good_filename, 'a+')
+        # Create an instance of the FileHandlerClass
+        file_handler = filehandlerclass(self.test_good_filename)
+
+        # Call the method to append weather data
+        file_handler.append_specific_file_with_singular_weather_data('22-06-16 22', 12.3)
+
+        # Check if the file was opened with the expected parameters
+        with open(self.test_good_filename, 'a+') as file:
+            # Read the contents of the file
+            content = file.read()
+            # Check if the data was appended correctly
+            self.assertIn('22-06-16 22', content)
+            self.assertIn('12.3', content)
 
     def test_read_specific_weather_file(self):
         with patch('builtins.open', create=True) as mock_open:
