@@ -142,3 +142,21 @@ def split_list(input_list: list):  # how to declare two list returns?
     logging.debug("Y axis values: " + str(local_y))
 
     return local_x, local_y
+
+def handle_input_list_datetime(actual_date):
+    """
+    This function takes a list of datetime strings and returns a list of datetime strings with only the hour.
+    :param actual_date: list of str
+    :return: list of str
+    """
+    return [date[:13] for date in actual_date]
+
+# functions.py
+
+def create_html_page_wrapper(title):
+    """
+    Create HTML page wrapper.
+    :param title: str
+    :return: tuple
+    """
+    return f"<html><head><title>{title}</title></head><body>", "</body></html>"

@@ -82,10 +82,16 @@ class FileHandlerClass:
             logging.error(f'Randon exception error in file_handler() - {str(err)} - {error}', exc_info=True)
 
     def add_files_in_directory(self, directory='data/') -> list:
-        for a_file in os.listdir(directory):
-            extension = os.path.splitext(a_file)
-            self.files_in_directory.append(extension[0])
-        return self.files_in_directory
+        """
+        Add files in a directory to a list.
+        :param directory: str
+        :return: list
+        """
+        files = []
+        for root, _, filenames in os.walk(directory):
+            for filename in filenames:
+                files.append(os.path.splitext(filename)[0])
+        return files
 
     def get_files_in_directory(self) -> list:
         return self.files_in_directory
