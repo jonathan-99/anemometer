@@ -14,6 +14,7 @@ pipeline {
                 script {
                     echo "check git, groovy and pip version"
                     sh """
+                        chmod +x /jenkins_scripts/setup_checks.sh
                         ./jenkins_scripts/setup_checks.sh
                     """
                 }
@@ -36,6 +37,7 @@ pipeline {
                     try {
                         echo "doing unittests"
                         sh """
+                            chmod +x /jenkins_scripts/do_unittests.sh
                             ./jenkins_scripts/do_unittests.sh
                         """
                     } catch(err) {
@@ -49,7 +51,10 @@ pipeline {
                 script {
                     try {
                         echo "coverage report"
-                        ./jenkins_scripts/do_unittests.sh
+                        sh """
+                            chmod +x /jenkins_scripts/do_unittests.sh
+                            ./jenkins_scripts/do_unittests.sh
+                        """
                     } catch(err) {
                         echo "There was an error in coverage report $err"
                     }
