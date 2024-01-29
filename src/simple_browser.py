@@ -4,13 +4,13 @@
 
 try:
     import sys
+    import logging
     from http.server import BaseHTTPRequestHandler, HTTPServer
     import src.basic_plotting as basic_plot
     import src.functions
     import src.rendering_html_class as html_class
-    import logging
 except ImportError as e:
-    sys.exit("Importing error: " + str(e))
+    logging.error("Importing error: " + str(e))
 
 
 class WebServer(BaseHTTPRequestHandler):
@@ -22,7 +22,7 @@ class WebServer(BaseHTTPRequestHandler):
     def serve_page(self, page: str):
         self.path = page
         try:
-            print("first, ", self.path[1:])
+            logging.debug("first, {}".format(self.path[1:]))
             file_to_open = open(self.path[1:]).read()
             self.send_response(200)
         except FileNotFoundError as err:
@@ -55,7 +55,6 @@ def setup() -> None:
         + str(server.server_address) \
         + " port: " \
         + str(server.server_port)
-    print(status)
     logging.debug(status)
     server.serve_forever()
 

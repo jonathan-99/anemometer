@@ -31,18 +31,17 @@ class ConfigData:
             logging.error("Error reading JSON file: {}".format(err))
             return {"Error": "Invalid JSON format or empty file"}
 
-
     def __init__(self, filename='config.json'):
         logging.debug("--This is the path -- {} - {} - {}".format(os.path.isfile(filename),
                                                                   os.path.exists(filename), filename))
         try:
             file_object = self.read_json_data_from_file(filename)
-            print("Error trapping: {} - {}".format(type(file_object), file_object))
+            logging.debug("Error trapping: {} - {}".format(type(file_object), file_object))
             if "error" in str(file_object).lower() or not file_object:
                 self.set_all_default()
-                print("__init__ if default")
+                logging.debug("__init__ if default")
             else:
-                print("__init__ else - {}".format(file_object))
+                logging.debug("__init__ else - {}".format(file_object))
                 self._set_path('/opt/anemometer/')
                 self._set_logging_path('logging/')
                 self._set_log_filename('debugging.log')
@@ -67,7 +66,7 @@ class ConfigData:
     def _set_server_port(self, number=6000) -> None:
         self.server_port = number
 
-    def _set_logging_level(self, log_level="logging.DEBUG") -> None:
+    def _set_logging_level(self, log_level="logging.debug") -> None:
         self.logging_level = log_level
 
     def get_path(self) -> str:
