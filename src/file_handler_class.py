@@ -16,7 +16,7 @@ except Exception as e:
 class FileHandlerClass:
 
     def _get_config_path(self) -> str:
-        config_object = ConfigData.ConfigData('opt/anemomenter/config.json')
+        config_object = ConfigData.ConfigData('opt/anemometer/src/config.json')
         return str(config_object.get_path())
 
     def __init__(self, name: str) -> None:
@@ -88,9 +88,33 @@ class FileHandlerClass:
         :return: list
         """
         files = []
-        for root, _, filenames in os.walk(directory):
-            for filename in filenames:
-                files.append(os.path.splitext(filename)[0])
+        print("Walking directory:", directory)  # Add this line to print the directory being traversed
+
+        try:
+            os.listdir(directory)
+        except FileNotFoundError:
+            print("Directory does not exist.")
+            return files  # Return empty list if directory does not exist
+
+        for root, directories, filenames in os.walk(directory):
+            print(f"This is root - {root} - directories {directories} - files {filenames}")
+            for file_name in filenames:
+                print("File:", file_name)
+                files.append(os.path.splitext(file_name)[0])
+
+        print("Files found:", files)
+        return files
+
+        try:
+            root, directories, files = os.walk(directory)
+            print(f"This is root - {root} - directories {directories} - files {files}")
+            for r in files:
+                print("Root:", r)
+                files.append(os.path.splitext(r)[0])
+        except StopIteration as err:
+            print(f"No files found in the directory {err}")
+
+        print("Files:", files)
         return files
 
     def get_files_in_directory(self) -> list:
