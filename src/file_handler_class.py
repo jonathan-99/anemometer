@@ -16,7 +16,7 @@ except Exception as e:
 class FileHandlerClass:
 
     def _get_config_path(self) -> str:
-        config_object = ConfigData.ConfigData('opt/anemomenter/src/config.json')
+        config_object = ConfigData.ConfigData('opt/anemometer/src/config.json')
         return str(config_object.get_path())
 
     def __init__(self, name: str) -> None:
