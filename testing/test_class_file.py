@@ -6,7 +6,7 @@ import src.class_file as ConfigData
 class TestConfigData(unittest.TestCase):
 
     def setUp(self):
-        self.config = ConfigData.ConfigData()
+        self.config = ConfigData.ConfigData('test_class_file_config.json')
 
     def test_read_json_data_from_file_success(self):
         data = self.config.read_json_data_from_file('test_class_file.json')
