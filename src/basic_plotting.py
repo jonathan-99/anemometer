@@ -8,6 +8,7 @@ try:
     from src import functions
     import logging
     from src.class_file import config_data
+    import src.file_handler_class as file_handler_class
     from collections import namedtuple
 except ImportError as e:
     sys.exit("Importing error: " + str(e))
@@ -16,7 +17,7 @@ default_file_name = "../testing/test_data_from_counter.csv"
 # can I remove this global variable?
 
 
-def basic_plot(input_list, save=False) -> None:
+def basic_plot(input_list: list, save=False) -> None:
     """
     This functions takes dates (and hours) and plots them on a basic x-y chart.
     """
@@ -53,15 +54,17 @@ def basic_plot(input_list, save=False) -> None:
 def create_plot() -> None:
     logging.debug("Within create plot for png creation.")
 
-    # list_file_directory returns a tuple.
-    value = functions.list_file_directory()
-    local_list = functions.read_in_data(value[1])
-    basic_plot(local_list, True)
+    file_handler_object = file_handler_class.FileHandlerClass('data/2202-11-04.txt')
+    file_handler_object.read_specific_csv_file('data/2202-11-04.txt')
+    value = file_handler_object.get_weather_data_list()
+    basic_plot(value, True)
 
 
 if __name__ == '__main__':
-    config = functions.get_config()
-    logging.basicConfig(filename=config.get_logging_location())
+    import src.class_file as config_data
+    config = config_data.ConfigData('config.json')
+    name = config.get_logging_path() + config.get_log_filename()
+    logging.basicConfig(filename=name)
 
-    alist = functions.read_in_data(default_file_name)
+    alist = functions.get_weather_data()
     basic_plot(alist)
