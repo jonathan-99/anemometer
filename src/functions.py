@@ -46,7 +46,7 @@ def get_config() -> ConfigData:
     """
 
     # error_trapping()
-    config_object = ConfigData('opt/anemometer/src/config.json')
+    config_object = ConfigData('config.json')
 
     logging.debug('We found these configs: ' + str(config_object.show_all()))
     print("All config data: ", config_object.show_all())

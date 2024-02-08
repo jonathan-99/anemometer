@@ -6,6 +6,10 @@ try:
     import logging
     import ast
 except ImportError as e:
+    import os
+    import sys
+    import json
+    import logging
     logging.debug("Importing error: " + str(e))
 
 
@@ -14,24 +18,7 @@ class ConfigData:
     This holds and retrieves the config file for all other files to call on.
     """
 
-    @staticmethod
-    def read_json_data_from_file(filename: str) -> dict:
-        logging.debug("read_json_data_from_file({})".format(filename))
-        try:
-            with open(filename, 'r', encoding="utf-8") as fileObject:
-                data = json.load(fileObject)
-                logging.debug("read_json_data_from_file() - data contents: {}".format(data))
-                return data
-        except FileNotFoundError:
-            logging.warning("current files - {} ".format(os.listdir('.')))
-            logging.warning("JSON file not found: {}".format(filename))
-            return {"Error": "File not found"}
-        except json.decoder.JSONDecodeError as err:
-            logging.warning("current files - {} ".format(os.listdir('.')))
-            logging.error("Error reading JSON file: {}".format(err))
-            return {"Error": "Invalid JSON format or empty file"}
-
-    def __init__(self, filename='opt/anemometer/src/config.json'):
+    def __init__(self, filename='config.json'):
         logging.debug("--This is the path -- {} - {} - {}".format(os.path.isfile(filename),
                                                                   os.path.exists(filename), filename))
         try:
@@ -50,6 +37,41 @@ class ConfigData:
                 self._set_logging_level('logging.debug')
         except ImportError as err:
             logging.error("Importing error: " + str(err))
+
+    def change_directory_if_file_not_found(self, filename: str) -> None:
+        """
+        Change the current working directory to ~/opt/anemometer/ if the specified file is not found.
+
+        Args:
+            filename (str): The filename to check for existence.
+        """
+        if sys.platform.startswith('linux'):
+            if not os.path.exists(filename):
+                logging.warning(f"File not found: {filename}")
+                logging.warning("Changing directory to ~/opt/anemometer/")
+                os.chdir(os.path.expanduser("~/opt/anemometer/"))
+                logging.info(f"Current working directory changed to: {os.getcwd()}")
+        elif sys.platform.startswith('win'):
+            raise NotImplementedError("Windows platform is not supported.")
+        else:
+            raise NotImplementedError("Unsupported platform detected.")
+
+    def read_json_data_from_file(self, filename: str) -> dict:
+        logging.debug("read_json_data_from_file({})".format(filename))
+        self.change_directory_if_file_not_found(filename)
+        try:
+            with open(filename, 'r', encoding="utf-8") as fileObject:
+                data = json.load(fileObject)
+                logging.debug("read_json_data_from_file() - data contents: {}".format(data))
+                return data
+        except FileNotFoundError:
+            logging.warning("current files - {} ".format(os.listdir('.')))
+            logging.warning("JSON file not found: {}".format(filename))
+            return {"Error": "File not found"}
+        except json.decoder.JSONDecodeError as err:
+            logging.warning("current files - {} ".format(os.listdir('.')))
+            logging.error("Error reading JSON file: {}".format(err))
+            return {"Error": "Invalid JSON format or empty file"}
 
     def _set_path(self, path_location="/opt/anemometer/") -> None:
         self.path = path_location
