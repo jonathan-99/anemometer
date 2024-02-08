@@ -4,11 +4,11 @@ import csv
 import json
 import logging
 from unittest.mock import patch
+from src.file_handler_class import FileHandlerClass as filehandlerclass
 
 try:
     import src.weather_class as weather_class
     import src.functions as functions
-    import src.file_handler_class as filehandlerclass
     import ast
 except Exception as e:
     logging.error("Importing packages error: {}".format(e))
@@ -17,7 +17,7 @@ except Exception as e:
 class TestFileHandler(unittest.TestCase):
 
     def setUp(self):
-        self.test_directory = '../data'
+        self.test_directory = 'data/'
         self.test_good_filename = "../data/2022-07-26.txt"
         self.test_bad_filename = 'bad.txt'
         self.test_csv_filename = 'test_csv_file.csv'
@@ -99,7 +99,12 @@ class TestFileHandler(unittest.TestCase):
             pass
         with open(os.path.join(self.test_directory, 'subdir', 'file2.txt'), 'w') as f:
             pass
+
+        # Print out the contents of the directory
+        print("Directory contents:", os.listdir(self.test_directory))
+
         files = filehandlerclass.add_files_in_directory(self.test_directory)
+        print("Files found:", files)  # Add this line to print the files found
         self.assertEqual(len(files), 2)
         self.assertIn('file1', files)
         self.assertIn('file2', files)
