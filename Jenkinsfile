@@ -9,18 +9,32 @@
 pipeline {
     agent any
     stages {
-        stage('setup 1') {
+        stage('checks') {
             steps {
                 script {
-                    echo "check git, groovy and pip version"
                     sh """
-                        chmod +x /jenkins_scripts/setup_checks.sh
-                        ./jenkins_scripts/setup_checks.sh
+                        echo "this is the npm version ${sh(script: 'git --version', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'python --version', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'sudo ufw status', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'docker -v', returnStdout: true).trim()}"
                     """
                 }
             }
         }
-        stage('download') {
+        stage('setup 1') {
+            steps {
+                script {
+                    sh """
+                        file='jenkins_scripts/setup_checks.sh'
+                        chmod +x \$file
+                        filePermissions=\$(ls -l \$file)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file" /dev/null
+                    """
+                }
+            }
+        }
+        stage('download and install docker image') {
             steps {
                 script {
                     echo "git download"
