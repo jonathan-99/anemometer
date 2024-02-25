@@ -9,55 +9,54 @@
 pipeline {
     agent any
     stages {
+        stage('checks') {
+            steps {
+                script {
+                    sh """
+                        echo "this is the npm version ${sh(script: 'git --version', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'python --version', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'sudo ufw status', returnStdout: true).trim()}"
+                        echo "this is the npm version ${sh(script: 'docker -v', returnStdout: true).trim()}"
+                    """
+                }
+            }
+        }
         stage('setup 1') {
             steps {
                 script {
-                    echo "check git, groovy and pip version"
                     sh """
-                        chmod +x /jenkins_scripts/setup_checks.sh
-                        ./jenkins_scripts/setup_checks.sh
+                        file='jenkins_scripts/setup_checks.sh'
+                        chmod +x \$file
+                        filePermissions=\$(ls -l \$file)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file" /dev/null
                     """
                 }
             }
         }
-        stage('download') {
+        stage('download and install docker image with dependencies') {
             steps {
                 script {
-                    echo "git download"
                     sh """
-                        rm -rf anemometer
-                        git clone https://github.com/jonathan-99/anemometer.git
+                        file1='jenkins_scripts/download_and_install.sh'
+                        chmod +x \$file1
+                        filePermissions=\$(ls -l \$file1)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file1" /dev/null
                     """
                 }
             }
         }
-        stage('unittest') {
+        stage('unittest, PEP8, coverage report') {
             steps {
                 script {
-                    try {
-                        echo "doing unittests"
-                        sh """
-                            chmod +x /jenkins_scripts/do_unittests.sh
-                            ./jenkins_scripts/do_unittests.sh
-                        """
-                    } catch(err) {
-                        echo "There was an error in unittests $err"
-                    }
-                }
-            }
-        }
-        stage('coverage') {
-            steps {
-                script {
-                    try {
-                        echo "coverage report"
-                        sh """
-                            chmod +x /jenkins_scripts/do_unittests.sh
-                            ./jenkins_scripts/do_unittests.sh
-                        """
-                    } catch(err) {
-                        echo "There was an error in coverage report $err"
-                    }
+                    sh """
+                        file2='jenkins_scripts/do_unittests.sh'
+                        chmod +x \$file2
+                        filePermissions=\$(ls -l \$file2)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file2" /dev/null
+                    """
                 }
             }
         }
