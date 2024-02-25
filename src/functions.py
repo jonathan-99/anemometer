@@ -1,162 +1,126 @@
 #!/usr/bin/env python3
 
 """A collection of all functions for this program."""
-try:
-    import datetime
-    import os
-    import sys
-    import csv
-    import json
-    import logging
-    import re
-    from src.class_file import ConfigData
-    from collections import namedtuple
-    import src.weather_class as weather_data_object
-    import src.file_handler_class as file_handler_class
-    import src.date_checking_class as date_checking_class
-except ImportError as e:
-    logging.error("Importing error: " + str(e))
+
+import datetime
+import os
+import re
+import logging
+import src.file_handler_class as file_handler_class
 
 
 def error_trapping():
-    alist = ["~../src/config.json",
-             "~../config.json",
-             "~src/config.json",
-             "~config.json",
-             "config.json",
-             "~anemometer/src/config.json",
-             "~/anemometer/src/config.json",
-             "~opt/anemometer/src/config.json",
-             "~/opt/anemometer/src/config.json",
-             "~../opt/anemometer/src/config.json",
-             "not this"
-             "~../../opt/anemometer/src/config.json",
-             "above this"
-             "~../../../opt/anemometer/src/config.json",
-             "~../../../~/opt/anemometer/src/config.json",
-             ]
-    for i in range(0, len(alist), 1):
-        logging.debug("check json file file_location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
+    """Check file locations for errors."""
+    file_locations = [
+        "~../src/config.json",
+        "~../config.json",
+        "~src/config.json",
+        "~config.json",
+        "config.json",
+        "~anemometer/src/config.json",
+        "~/anemometer/src/config.json",
+        "~opt/anemometer/src/config.json",
+        "~/opt/anemometer/src/config.json",
+        "~../opt/anemometer/src/config.json",
+        "~../../opt/anemometer/src/config.json",
+        "~../../../opt/anemometer/src/config.json",
+        "~../../../~/opt/anemometer/src/config.json",
+    ]
+    for file_location in file_locations:
+        logging.debug(f"Check json file file_location - {os.path.exists(file_location)} - {file_location}")
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    logging.debug("---You are here -- {}".format(dir_path))
-
-def get_config() -> ConfigData:
-    """
-    Get the config from a json file and return an object class of that data.
-    """
-
-    # error_trapping()
-    config_object = ConfigData()
-
-    logging.debug('We found these configs: ' + str(config_object.show_all()))
-    print("All config data: ", config_object.show_all())
-    return config_object
+    logging.debug(f"You are here -- {dir_path}")
 
 
 def file_handler(time, speed, filename):
+    """Handle file operations."""
     file_handler_object = file_handler_class.FileHandlerClass(filename)
     file_handler_object.append_specific_file_with_singular_weather_data(time, speed, filename)
 
 
 def get_yesterdays_date() -> str:
-    """
-    Simple function for getting yesterday's date.
-    :return String:
-    """
+    """Get yesterday's date."""
     yesterday = datetime.datetime.now() - datetime.timedelta(1)
-    logging.debug(("Yesterday is: " + str(yesterday)[0:10]))
+    logging.debug(f"Yesterday is: {str(yesterday)[0:10]}")
     return str(yesterday)[0:10]
 
 
-def get_todays_date() -> datetime:
-    """
-    Get date for a filename.
-    """
+def get_weather_data(filename='data/2022-11-03.txt') -> list:
+    """Get weather data."""
+    file_object = file_handler_class.FileHandlerClass(filename)
+    file_object.read_specific_csv_file(filename)
+    return file_object.get_weather_data_list()
+
+
+def get_todays_date() -> str:
+    """Get today's date."""
     output = datetime.datetime.now()
-    return 'data/' + output.strftime("%Y-%m-%d") + '.txt'
+    return f"data/{output.strftime('%Y-%m-%d')}.txt"
 
 
-def create_weather_list(in_str: str) -> weather_data_object:
+# def create_weather_list(in_str: str) -> weather_data_object:
+#    """Create a list of weather objects."""
+#    output_list = weather_data_object.WeatherData()
+#    temp_list = in_str.replace("'", "").split(',')
+#    for i in range(0, len(temp_list), 2):
+#        logging.debug(f"Create list() - index number {i}")
+#        output_list.eventTime = temp_list[i]
+#        output_list.windSpeed = temp_list[i + 1]
+#    return output_list
+
+
+def check_date_format(date_list: list) -> list:
     """
-    This creates a list of weather objects if there are multiple instances. Returns list.
-    """
+    Iterate through a list of dates and check if they are in the specified format.
 
-    output_list = weather_data_object.WeatherData()
-    temp_list = in_str.replace("'", "").split(',')
-    for i in range(0, len(temp_list), 2):
-        logging.debug("create_list() - index number {}".format(i))
-        output_list.eventTime = temp_list[i]
-        output_list.windSpeed = temp_list[i + 1]
-    return output_list
+    Args:
+        date_list (list): List of dates to be checked.
+
+    Returns:
+        list: List of dates that match the specified format.
+    """
+    valid_dates = []
+    date_pattern = r"\d{4}-\d{2}-\d{2} \d{2}(:\d{2}){1,2},\d+\.\d+"
+
+    for date in date_list:
+        # Check if the date includes time with microseconds
+        if re.match(date_pattern, date):
+            # Extract only the hour part
+            hour_only = date.split()[1].split(":")[0]
+            # Reconstruct the date with only the hour part
+            corrected_date = date.split()[0] + " " + hour_only + ","
+            valid_dates.append(corrected_date)
+        else:
+            valid_dates.append(date)
+
+    return valid_dates
 
 
 def iterate_through_list_for_good_datetime(in_list: list) -> list:
-    """
-    Take a list of datetimes and correct against a regex, before returning the corrected list    def error_trapping():
-        alist = ["~../src/config.json",
-                 "~../config.json",
-                 "~src/config.json",
-                 "~config.json",
-                 "config.json",
-                 "~anemometer/src/config.json",
-                 "~/anemometer/src/config.json",
-                 "~opt/anemometer/src/config.json",
-                 "~/opt/anemometer/src/config.json",
-                 "~../opt/anemometer/src/config.json",
-                 "not this"
-                 "~../../opt/anemometer/src/config.json",
-                 "above this"
-                 "~../../../opt/anemometer/src/config.json",
-                 "~../../../~/opt/anemometer/src/config.json",
-                 ]
-        for i in range(0, len(alist), 1):
-            print("check json file file_location - {} - {}".format(os.path.exists(alist[i]), alist[i]))
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        print("---You are here -- {}".format(dir_path))
-    :in_list: list: input list
-    """
-    date_checking_object = date_checking_class.DateCheckingClass
-    output_list = date_checking_object.correct_datetime_against_regex(in_list)
-    return output_list
+    """Correct datetime against a regex."""
+    return check_date_format(in_list)
 
 
-def split_list(input_list: list):  # how to declare two list returns?
-    """
-    This will take data in str format "YY-MM-DD HH speed.value" and return into (datetime, str).
-
-    :return: list -> WeatherData(datetime, str)
-    """
-    logging.debug("reformat_data for plotting")
-
+def split_list(input_list: list) -> tuple:
+    """Split data into datetime and speed."""
     local_x = []
     local_y = []
-
-    logging.debug("input list " + str(input_list))
     for counter, g in enumerate(input_list):
         if counter % 2 == 0:
             gl = g[0:13]
             local_x.append(gl)
         else:
             local_y.append(str(g))
-    logging.debug("X axis values: " + str(local_x))
-    logging.debug("Y axis values: " + str(local_y))
-
+    logging.debug(f"X axis values: {local_x}")
+    logging.debug(f"Y axis values: {local_y}")
     return local_x, local_y
 
-def handle_input_list_datetime(actual_date):
-    """
-    This function takes a list of datetime strings and returns a list of datetime strings with only the hour.
-    :param actual_date: list of str
-    :return: list of str
-    """
+
+def handle_input_list_datetime(actual_date: list) -> list:
+    """Handle input list datetime."""
     return [date[:13] for date in actual_date]
 
-# functions.py
 
-def create_html_page_wrapper(title):
-    """
-    Create HTML page wrapper.
-    :param title: str
-    :return: tuple
-    """
+def create_html_page_wrapper(title: str) -> tuple:
+    """Create HTML page wrapper."""
     return f"<html><head><title>{title}</title></head><body>", "</body></html>"
