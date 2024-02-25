@@ -30,14 +30,27 @@ if [ $? -ne 0 ]; then
     docker exec $CONTAINER_ID bash -c 'which pip3' > /dev/null 2>&1 || docker exec $CONTAINER_ID apt-get install -y python3-pip
     docker exec $CONTAINER_ID bash -c 'which curl' > /dev/null 2>&1 || docker exec $CONTAINER_ID apt-get install -y curl
     docker exec $CONTAINER_ID bash -c 'which wget' > /dev/null 2>&1 || docker exec $CONTAINER_ID apt-get install -y wget
+    docker exec $CONTAINER_ID apt-get install -y --upgrade setuptools
+    docker exec $CONTAINER_ID bash -c 'which RPI.GPIO' > /dev/null 2>&1 || docker exec $CONTAINER_ID apt-get install -y RPI.GPIO
+    docker exec $CONTAINER_ID bash -c 'which adafruit-blinka' > /dev/null 2>&1 || docker exec $CONTAINER_ID apt-get install -y adafruit-blinka
 else
     echo "Necessary packages are already installed."
+fi
+docker exec $CONTAINER_ID apt-get update -y
+docker exec $CONTAINER_ID apt-get upgrade -y
+
+docker exec $CONTAINER_ID /bin/bash -c "export DISPLAY=\$(cat /etc/resolv.conf | grep nameserver | awk '{print \$2}'):0"
+
+if docker exec $CONTAINER_ID ls anemometer &> /dev/null; then
+    echo "Anemometer is already cloned in the container."
+else
+    echo "Cloning Anemometer repository..."
+    docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
 fi
 
 # Print OS version
 echo "OS Version:"
 docker exec $CONTAINER_ID cat /etc/os-release
-
 
 # Print Python version
 echo "Python Version:"
