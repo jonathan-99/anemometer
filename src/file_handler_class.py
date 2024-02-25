@@ -1,134 +1,135 @@
+#!/usr/bin/env python3
+import os
+import csv
+import json
+import logging
+import sys
 
-
-try:
-    import src.weather_class as weather_class
-    import ast
-    import os
-    import csv
-    import json
-    import logging
-    import src.class_file as ConfigData
-
-except Exception as e:
-    logging.error("Importing packages error: {}".format(e))
+import src.weather_class as weather_class
+import src.class_file as ConfigData
 
 
 class FileHandlerClass:
 
-    def _get_config_path(self) -> str:
-        config_object = ConfigData.ConfigData('opt/anemometer/src/config.json')
-        return str(config_object.get_path())
-
     def __init__(self, name: str) -> None:
-        self.filename = name
-        self.directory = self._get_config_path()
-        self.files_in_directory = []
-        self.weatherDataList = []
-        logging.debug("FileHandlerClass initiated")
+        try:
+            self._filename = name
+            self._directory = self._get_config_path()
+            self._files_in_directory = []
+            self._weatherDataList = []
+            logging.debug("FileHandlerClass initiated")
+        except Exception as e:
+            logging.error(f"Initialization error: {e}")
 
-    def _append_weather_data_singular_to_list(self, time, speed) -> None:
-        self.weatherDataList.append((time, speed))
+    def get_filename(self) -> str:
+        return self._filename
+
+    def set_filename(self, name: str) -> None:
+        self._filename = name
+
+    def get_directory(self) -> str:
+        return self._directory
+
+    def set_directory(self, path: str) -> None:
+        self._directory = path
+
+    def get_files_in_directory(self) -> list:
+        return self._files_in_directory
+
+    def append_files_in_directory(self, file: str) -> None:
+        self._files_in_directory.append(file)
+
+    def set_files_in_directory(self, files: list) -> None:
+        self._files_in_directory = files
 
     def get_weather_data_list(self) -> list:
-        return self.weatherDataList
+        return self._weatherDataList
 
-    def append_specific_file_with_singular_weather_data(self, time_stamp, speed, filename='data/2022-07-26.txt') -> None:
-        logging.debug(f"Opening file {filename} with absolute path {self.directory}.")
+    def set_weather_data_list(self, data: list) -> None:
+        self._weatherDataList = data
+
+    def _get_config_path(self) -> str:
         try:
-            with open(self.directory + filename, 'a+') as fileObject:
+            self._change_directory_if_file_not_found('config.json')
+            config_object = ConfigData.ConfigData('config.json')
+            return str(config_object.get_path())
+        except Exception as e:
+            logging.error(f"Error getting config path: {e}")
+
+    def _change_directory_if_file_not_found(self, filename: str) -> None:
+        try:
+            if sys.platform.startswith('linux'):
+                if not os.path.exists(filename):
+                    logging.warning(f"File not found: {filename}")
+                    logging.warning("Changing directory to ~/opt/anemometer/")
+                    os.chdir(os.path.expanduser("~/opt/anemometer/"))
+                    logging.info(f"Current working directory changed to: {os.getcwd()}")
+            else:
+                raise NotImplementedError(f"{sys.platform} platform is not supported.")
+        except NotImplementedError as e:
+            logging.error(f"NotImplementedError: {e}")
+
+    def _append_weather_data_singular_to_list(self, time, speed) -> None:
+        try:
+            self._weatherDataList.append((time, speed))
+        except Exception as e:
+            logging.error(f"Error appending weather data: {e}")
+
+    def append_specific_file_with_singular_weather_data(self,
+                                                        time_stamp, speed, filename='data/2022-07-26.txt') -> None:
+        try:
+            logging.debug(f"Opening file {filename} with absolute path {self._directory}.")
+            self._change_directory_if_file_not_found(filename)
+            with open(os.path.join(self._directory, filename), 'a+') as fileObject:
                 fileObject.write(f"{time_stamp},{speed},\n")
                 logging.debug('File added to in file_handler()')
-        except (FileExistsError, FileNotFoundError) as err_1:
-            logging.error(f'Exception error in file_handler() - {str(err_1)}', exc_info=True)
-        except Exception as err_2:
-            logging.error(f'Unknown exception error in file_handler() - {str(err_2)}', exc_info=True)
+        except Exception as e:
+            logging.error(f"Error appending weather data to file: {e}")
 
     def read_specific_weather_file(self, filename="data/2022-07-26.txt") -> None:
-        logging.debug("read_specific_weather_file()")
         try:
-            with open(filename, 'r') as fileObject:
+            logging.debug("read_specific_weather_file()")
+            self._change_directory_if_file_not_found(filename)
+            with open(os.path.join(self._directory, filename), 'r') as fileObject:
                 input_data = fileObject.read()
                 logging.debug(f"read_specific_weather_file(): {input_data[0]}, len({len(input_data)})")
                 for i in range(0, len(input_data), 2):
                     self._append_weather_data_singular_to_list(input_data[i], input_data[i + 1])
                 logging.debug(f"read_specific_weather_file({filename})")
-        except (FileExistsError) as err_1:
-            error = str(os.listdir('.'))
-            logging.error(f'FileExistsError in file_handler() - {str(err_1)} - {error}', exc_info=True)
-        except (FileNotFoundError) as err_2:
-            error = str(os.listdir('.'))
-            logging.error(f'FileNotFoundError in file_handler() - {str(err_2)} - {error}', exc_info=True)
-        except Exception as err:
-            error = str(os.listdir('.'))
-            logging.error(f'Randon exception error in file_handler() - {str(err)} - {error}', exc_info=True)
+        except Exception as e:
+            logging.error(f"Error reading specific weather file: {e}")
 
     def read_specific_csv_file(self, filename) -> None:
-        self.filename = filename
         try:
-            with open(self.filename, 'r') as file_object:
+            self._filename = filename
+            self._change_directory_if_file_not_found(filename)
+            with open(os.path.join(self._directory, filename), 'r') as file_object:
                 csv_reader = csv.reader(file_object, delimiter=',')
                 logging.debug("read_specific_csv_file()")
                 for i, row in enumerate(csv_reader):
                     if i % 2 == 0:
                         self._append_weather_data_singular_to_list(row[0], row[1])
-        except (FileExistsError) as err_1:
-            error = str(os.listdir('.'))
-            logging.error(f'FileExistsError in file_handler() - {str(err_1)} - {error}', exc_info=True)
-        except (FileNotFoundError) as err_2:
-            error = str(os.listdir('.'))
-            logging.error(f'FileNotFoundError in file_handler() - {str(err_2)} - {error}', exc_info=True)
-        except Exception as err:
-            error = str(os.listdir('.'))
-            logging.error(f'Randon exception error in file_handler() - {str(err)} - {error}', exc_info=True)
+        except Exception as e:
+            logging.error(f"Error reading specific CSV file: {e}")
 
     def add_files_in_directory(self, directory='data/') -> list:
-        """
-        Add files in a directory to a list.
-        :param directory: str
-        :return: list
-        """
-        files = []
-        print("Walking directory:", directory)  # Add this line to print the directory being traversed
+        if not self._files_in_directory:
+            try:
+                files = []
+                for root, _, filenames in os.walk(directory):
+                    for filename in filenames:
+                        files.append(os.path.splitext(filename)[0])
+                return files
+            except Exception as e:
+                logging.error(f"Error adding files in directory: {e}")
+        else:
+            pass
 
+    def read_json_data_from_file(self, filename: str) -> json:
         try:
-            os.listdir(directory)
-        except FileNotFoundError:
-            print("Directory does not exist.")
-            return files  # Return empty list if directory does not exist
-
-        for root, directories, filenames in os.walk(directory):
-            print(f"This is root - {root} - directories {directories} - files {filenames}")
-            for file_name in filenames:
-                print("File:", file_name)
-                files.append(os.path.splitext(file_name)[0])
-
-        print("Files found:", files)
-        return files
-
-        try:
-            root, directories, files = os.walk(directory)
-            print(f"This is root - {root} - directories {directories} - files {files}")
-            for r in files:
-                print("Root:", r)
-                files.append(os.path.splitext(r)[0])
-        except StopIteration as err:
-            print(f"No files found in the directory {err}")
-
-        print("Files:", files)
-        return files
-
-    def get_files_in_directory(self) -> list:
-        return self.files_in_directory
-
-    @staticmethod
-    def read_json_data_from_file(filename: str) -> json:
-        try:
-            data = [json.loads(line) for line in open(filename, 'r')]
+            self._change_directory_if_file_not_found(filename)
+            data = [json.loads(line) for line in open(os.path.join(self._directory, filename), 'r')]
             print(f"Data contents: {data}")
             return data
-        except (FileExistsError, FileNotFoundError) as err:
-            logging.error(f"Getting config error: {str(err)}")
-            return {"Error:": str(err)}
-        except json.decoder.JSONDecodeError as err_1:
-            logging.error(f"Error. JSONDecodeError. Possibly you have a special character - {err_1}")
-            return {"Error 1:": str(err_1)}
+        except Exception as e:
+            logging.error(f"Error reading JSON data from file: {e}")
