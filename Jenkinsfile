@@ -34,44 +34,29 @@ pipeline {
                 }
             }
         }
-        stage('download and install docker image') {
+        stage('download and install docker image with dependencies') {
             steps {
                 script {
-                    echo "git download"
                     sh """
-                        rm -rf anemometer
-                        git clone https://github.com/jonathan-99/anemometer.git
+                        file1='jenkins_scripts/download_and_install.sh'
+                        chmod +x \$file1
+                        filePermissions=\$(ls -l \$file1)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file1" /dev/null
                     """
                 }
             }
         }
-        stage('unittest') {
+        stage('unittest, PEP8, coverage report') {
             steps {
                 script {
-                    try {
-                        echo "doing unittests"
-                        sh """
-                            chmod +x /jenkins_scripts/do_unittests.sh
-                            ./jenkins_scripts/do_unittests.sh
-                        """
-                    } catch(err) {
-                        echo "There was an error in unittests $err"
-                    }
-                }
-            }
-        }
-        stage('coverage') {
-            steps {
-                script {
-                    try {
-                        echo "coverage report"
-                        sh """
-                            chmod +x /jenkins_scripts/do_unittests.sh
-                            ./jenkins_scripts/do_unittests.sh
-                        """
-                    } catch(err) {
-                        echo "There was an error in coverage report $err"
-                    }
+                    sh """
+                        file2='jenkins_scripts/do_unittests.sh'
+                        chmod +x \$file2
+                        filePermissions=\$(ls -l \$file2)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file2" /dev/null
+                    """
                 }
             }
         }
