@@ -41,7 +41,7 @@ pipeline {
                         chmod +x \$file1
                         filePermissions=\$(ls -l \$file1)
                         echo "File permissions: \$filePermissions"
-                        script -q -c ".\$file1" /dev/null
+                        script -q -c "./\$file1" /dev/null
                     """
                 }
             }
@@ -54,7 +54,7 @@ pipeline {
                         chmod +x \$file2
                         filePermissions=\$(ls -l \$file2)
                         echo "File permissions: \$filePermissions"
-                        script -q -c ".\$file2" /dev/null
+                        script -q -c "./\$file2" /dev/null
                     """
                 }
             }
