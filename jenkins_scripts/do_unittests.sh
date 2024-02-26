@@ -5,7 +5,7 @@ set -eu -o pipefail # fail on error and report it, debug all lines
 sudo -n true
 test $? -eq 0 || exit 1 "you should have sudo privilege to run this script"
 
-container_name=$('anemometer-test')
+container_name='anemometer-test'
 
 # PEP8 report
 docker exec $CONTAINER_ID sh -c 'command -v pep8 >/dev/null 2>&1 || { apt-get update && apt-get install -y python3-pep8; } && pep8 /path/to/your/directory'

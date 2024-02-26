@@ -1,6 +1,6 @@
 #!/bin/bash
 
-container_name=$('anemometer-test')
+container_name='anemometer-test'
 
 # Check if the container already exists and running
 if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
