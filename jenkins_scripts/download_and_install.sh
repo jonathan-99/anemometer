@@ -17,7 +17,9 @@ if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
     fi
 else
     echo "Container '$container_name' does not exist, creating it..."
-    CONTAINER_ID=$(docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest)
+    docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest
+    CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
+    echo "Container ID after creation: $CONTAINER_ID"
 fi
 
 # Check if container creation was successful
@@ -25,6 +27,9 @@ if [ -z "$CONTAINER_ID" ]; then
     echo "Failed to create or retrieve container ID. Exiting."
     exit 1
 fi
+
+# Print container ID
+echo "Container ID: $CONTAINER_ID"
 
 # Install necessary packages if they are not installed
 echo "Installing necessary packages..."
@@ -60,6 +65,7 @@ fi
 # Print OS version
 echo "OS Version:"
 docker exec $CONTAINER_ID cat /etc/os-release
+
 
 # Print Python version
 echo "Python Version:"
