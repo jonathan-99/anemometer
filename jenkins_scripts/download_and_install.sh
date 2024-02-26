@@ -20,6 +20,9 @@ else
     docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest
     CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
     echo "Container ID after creation: $CONTAINER_ID"
+
+    # Introduce a delay to allow Docker to initialize the container
+    sleep 10
 fi
 
 # Check if container creation was successful
