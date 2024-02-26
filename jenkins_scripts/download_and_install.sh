@@ -16,7 +16,7 @@ if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
         CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
     fi
 else
-    echo "Container 'container_name' does not exist, creating it..."
+    echo "Container '$container_name' does not exist, creating it..."
     docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest
     CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
 fi
@@ -36,6 +36,7 @@ if [ $? -ne 0 ]; then
 else
     echo "Necessary packages are already installed."
 fi
+
 docker exec $CONTAINER_ID apt-get update -y
 docker exec $CONTAINER_ID apt-get upgrade -y
 
