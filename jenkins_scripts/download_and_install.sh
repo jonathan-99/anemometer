@@ -10,8 +10,8 @@ if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
     CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
 
     # Check if the container is running
-    if docker ps --format '{{.Names}}' | grep -q $container_name; then
-        echo "Container is running, using existing container..."
+    if [ "$(docker inspect --format '{{.State.Status}}' $CONTAINER_ID)" == "running" ]; then
+        echo "Container is running, using the existing container..."
     else
         echo "Container is not running, starting it..."
         docker start $container_name
@@ -24,6 +24,13 @@ else
     # Introduce a delay to allow Docker to initialize the container
     sleep 20
 fi
+
+# Introduce a delay until the container is healthy
+until [ "$(docker inspect --format '{{.State.Health.Status}}' $CONTAINER_ID)" == "healthy" ]; do
+    echo "Waiting for the container to be healthy..."
+    sleep 2
+done
+
 
 # Check if container creation was successful
 if [ -z "$CONTAINER_ID" ]; then
