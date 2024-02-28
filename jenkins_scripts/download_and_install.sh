@@ -6,9 +6,18 @@ container_name='anemometer-test'
 wait_for_container_health() {
     timeout=60
     while [[ $timeout -gt 0 ]]; do
-        if docker inspect --format='{{.State.Health.Status}}' $1 | grep -q "healthy"; then
-            echo "Container is healthy."
-            return 0
+        # Check if container has a health check defined
+        if docker inspect --format='{{.State.Health}}' $1 > /dev/null 2>&1; then
+            if docker inspect --format='{{.State.Health.Status}}' $1 | grep -q "healthy"; then
+                echo "Container is healthy."
+                return 0
+            fi
+        else
+            # If health check is not defined, consider container as healthy if it's running
+            if [ "$(docker inspect --format '{{.State.Status}}' $1)" == "running" ]; then
+                echo "Container is running but does not have a health check defined."
+                return 0
+            fi
         fi
         sleep 1
         ((timeout--))
@@ -16,6 +25,7 @@ wait_for_container_health() {
     echo "Timed out waiting for the container to be healthy."
     return 1
 }
+
 
 # Check if the container already exists
 if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
