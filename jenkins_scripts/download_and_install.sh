@@ -22,7 +22,7 @@ else
     echo "Container ID after creation: $CONTAINER_ID"
 
     # Introduce a delay to allow Docker to initialize the container
-    sleep 5
+    sleep 20
 fi
 
 # Check if container creation was successful
