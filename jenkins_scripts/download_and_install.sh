@@ -2,34 +2,61 @@
 
 container_name='anemometer-test'
 
+# Function to wait for container to be healthy
+wait_for_container_health() {
+    timeout=60
+    while [[ $timeout -gt 0 ]]; do
+        if docker inspect --format='{{.State.Health.Status}}' $1 | grep -q "healthy"; then
+            echo "Container is healthy."
+            return 0
+        fi
+        sleep 1
+        ((timeout--))
+    done
+    echo "Timed out waiting for the container to be healthy."
+    return 1
+}
+
 # Check if the container already exists
 if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
     echo "Container '$container_name' already exists."
-
-    # Retrieve the container ID
     CONTAINER_ID=$(docker ps --format '{{.ID}}' --filter "name=$container_name")
 
-    # Check if the container is running
     if [ "$(docker inspect --format '{{.State.Status}}' $CONTAINER_ID)" == "running" ]; then
         echo "Container is running, using the existing container..."
     else
         echo "Container is not running, starting it..."
         docker start $container_name
+        # Introduce a delay until the container is healthy
+        if ! wait_for_container_health $CONTAINER_ID; then
+            echo "Error: Container initialization failed. Exiting."
+            exit 1
+        fi
     fi
 else
     echo "Container '$container_name' does not exist, creating it..."
     CONTAINER_ID=$(docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest)
     echo "Container ID after creation: $CONTAINER_ID"
 
-    # Introduce a delay to allow Docker to initialize the container
-    sleep 20
+    # Introduce a delay for container initialization
+    if ! wait_for_container_health $CONTAINER_ID; then
+        echo "Error: Container initialization failed. Exiting."
+        exit 1
+    fi
 fi
 
-# Introduce a delay until the container is healthy
-until [ "$(docker inspect --format '{{.State.Health.Status}}' $CONTAINER_ID)" == "healthy" ]; do
-    echo "Waiting for the container to be healthy..."
-    sleep 2
-done
+if [ -z "$CONTAINER_ID" ]; then
+    echo "Failed to create or retrieve container ID. Exiting."
+    exit 1
+fi
+
+# Check if the container exists before proceeding
+if docker ps -a --format '{{.ID}}' | grep -q $CONTAINER_ID; then
+    echo "Container exists, proceeding with package installation..."
+else
+    echo "Error: Container does not exist. Exiting."
+    exit 1
+fi
 
 
 # Check if container creation was successful
