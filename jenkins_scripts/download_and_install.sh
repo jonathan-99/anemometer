@@ -61,21 +61,25 @@ if docker ps -a --format '{{.ID}}' | grep -q $CONTAINER_ID; then
     docker exec $CONTAINER_ID apt-get upgrade -y
 
     # Clone Anemometer using find
-    if docker exec $CONTAINER_ID find /path/to/container/root -name 'anemometer' -type d | grep -q 'anemometer'; then
-        echo "FIND - Anemometer is already cloned in the container."
-    else
-        echo "FIND - Cloning Anemometer repository..."
-        docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
-    fi
+    #if docker exec $CONTAINER_ID find /path/to/container/root -name 'anemometer' -type d | grep -q 'anemometer'; then
+    #    echo "FIND - Anemometer is already cloned in the container."
+    #else
+    #    echo "FIND - Cloning Anemometer repository..."
+    #    docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+    #fi
 
 
-    # Clone Anemometer repository if not already cloned
-    if docker exec $CONTAINER_ID ls anemometer &> /dev/null; then
-        echo "LS - Anemometer is already cloned in the container."
-    else
-        echo "LS - Cloning Anemometer repository..."
-        docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+    # Remove Anemometer repository if already cloned
+    docker exec $CONTAINER_ID ls anemometer &> /dev/null
+    if [ $? -eq 0 ]; then
+        echo "Anemometer repository already exists in the container. Removing..."
+        docker exec $CONTAINER_ID rm -rf anemometer
     fi
+
+    # Clone Anemometer repository
+    echo "Cloning Anemometer repository..."
+    docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+
 
     # Print OS version
     echo "OS Version:"
