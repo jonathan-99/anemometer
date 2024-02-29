@@ -4,7 +4,7 @@ import csv
 import json
 import logging
 from unittest.mock import patch
-from src.file_handler_class import FileHandlerClass as filehandlerclass
+from ..src import file_handler_class as filehandlerclass
 
 try:
     import src.weather_class as weather_class
