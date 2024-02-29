@@ -1,5 +1,5 @@
 import unittest
-import src.functions as functions
+from ..src import functions
 
 
 class TestFunction(unittest.TestCase):
