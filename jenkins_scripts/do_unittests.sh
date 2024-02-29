@@ -25,8 +25,9 @@ docker exec $CONTAINER_ID coverage html -d coverage_report
 # Install pip if not already installed and generate requirements.txt
 docker exec $CONTAINER_ID sh -c 'command -v pip >/dev/null 2>&1 || { echo >&2 "pip is not installed. Installing..."; apt-get update && apt-get install -y python3-pip; };'
 
-# Install pep8 if not already installed
-docker exec $CONTAINER_ID sh -c 'command -v pep8 >/dev/null 2>&1 || { echo >&2 "pep8 is not installed. Installing..."; apt-get update && apt-get install -y python3-pep8; };'
+# Install pep8 or pycodestyle if not already installed
+docker exec $CONTAINER_ID sh -c 'command -v pep8 >/dev/null 2>&1 || command -v pycodestyle >/dev/null 2>&1 || { echo >&2 "pep8 or pycodestyle is not installed. Installing..."; apt-get update && apt-get install -y python3-pep8 || apt-get install -y python3-pycodestyle; };'
 
 # Generate requirements.txt
 docker exec $CONTAINER_ID pip freeze | tee requirements.txt
+
