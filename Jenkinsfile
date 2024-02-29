@@ -25,11 +25,10 @@ pipeline {
             steps {
                 script {
                     sh """
-                        file='jenkins_scripts/setup_checks.sh'
-                        chmod +x \$file
-                        filePermissions=\$(ls -l \$file)
-                        echo "File permissions: \$filePermissions"
-                        script -q -c "./\$file" /dev/null
+                        file=jenkins_scripts/setup_checks.sh
+                        chmod +x jenkins_scripts/setup_checks.sh
+                        ls -l jenkins_scripts/setup_checks.sh
+                        script -q -c ./jenkins_scripts/setup_checks.sh /dev/null
                     """
                 }
             }
@@ -42,7 +41,7 @@ pipeline {
                         chmod +x \$file1
                         filePermissions=\$(ls -l \$file1)
                         echo "File permissions: \$filePermissions"
-                        script -q -c ".\$file1" /dev/null
+                        script -q -c "./\$file1" /dev/null
                     """
                 }
             }
@@ -55,7 +54,7 @@ pipeline {
                         chmod +x \$file2
                         filePermissions=\$(ls -l \$file2)
                         echo "File permissions: \$filePermissions"
-                        script -q -c ".\$file2" /dev/null
+                        script -q -c "./\$file2" /dev/null
                     """
                 }
             }
