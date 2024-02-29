@@ -1,4 +1,4 @@
-from src.class_file import ConfigData
+from ..src.class_file import ConfigData as ConfigData
 import unittest
 class testGetConfig(unittest.TestCase):
     def test_get_config(self):

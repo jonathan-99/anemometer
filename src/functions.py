@@ -6,7 +6,7 @@ import datetime
 import os
 import re
 import logging
-import src.file_handler_class as file_handler_class
+from ..src import file_handler_class as file_handler_class
 
 
 def error_trapping():

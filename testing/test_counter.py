@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, call
-import counter
+from .. import counter
 
 # @patch("RPi.GPIO.output", autospec=True)
 class test_counter(unittest.TestCase):

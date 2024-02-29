@@ -1,4 +1,4 @@
-import src.functions as functions
+from ..src import functions
 import unittest
 import datetime
 
