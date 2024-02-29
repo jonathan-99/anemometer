@@ -1,7 +1,7 @@
 import os
 import unittest
 import json
-import src.class_file as ConfigData
+from ..src import class_file as ConfigData
 
 class TestConfigData(unittest.TestCase):
 
