@@ -95,7 +95,7 @@ class TestFileHandler(unittest.TestCase):
     def test_add_files_in_directory(self):
         os.makedirs(self.test_directory, exist_ok=True)
         os.makedirs(os.path.join(self.test_directory, 'subdir'), exist_ok=True)
-        with open(os.path.join(self.test_directory, 'file1.txt'), 'w') as f:
+        with open(os.path.join(self.test_directory, '2024-03-07.txt'), 'w') as f:
             pass
         with open(os.path.join(self.test_directory, 'subdir', 'file2.txt'), 'w') as f:
             pass
