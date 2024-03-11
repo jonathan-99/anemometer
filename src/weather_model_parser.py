@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-
+import sys
+import requests
 from marshmallow import ValidationError
 import re
 import json
@@ -38,6 +38,26 @@ def extract_csv_from_text(file_path):
 
     return csv_text
 
+def post_json_data(json_data, url):
+    try:
+        response = requests.post(url, json=json_data)
+        response.raise_for_status()
+        print("JSON data posted successfully.")
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP Error: {err}")
+    except requests.exceptions.RequestException as err:
+        print(f"Request Exception: {err}")
+
 if __name__ == "__main__":
-    test_data = extract_csv_from_text('2024-03-07.txt')
-    parser(test_data)
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("Usage: python3 script.py <IP_address> <port> [<filename>]")
+        sys.exit(1)
+
+    ip_address = sys.argv[1]
+    port = sys.argv[2]
+    filename = sys.argv[3] if len(sys.argv) == 4 else '2024-03-07.txt'
+    url = f"http://{ip_address}:{port}/api/data"
+
+    test_data = extract_csv_from_text(filename)
+    parsed_data = parser(test_data)
+    post_json_data(parsed_data, url)
