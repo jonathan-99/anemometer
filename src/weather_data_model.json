@@ -9,10 +9,8 @@
       "hostname": "string"
     },
     "data": {
-      "filename": {
-        "datetime": "string",
-        "speed": "float"
-      }
+      "datetime": "string",
+      "speed": "float"
     },
     "relationship": {
 

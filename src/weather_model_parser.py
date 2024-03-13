@@ -5,30 +5,64 @@ import requests
 from marshmallow import ValidationError
 import json
 import class_weather_model as model
+import socket
+from datetime import datetime
 
 
-def parser(input_data) -> json:
+def extract_date_filename(file_path):
+    try:
+        # Extract the filename from the file path
+        filename = os.path.basename(file_path)
+
+        return filename
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None
+
+def convert_extracted_file_to_model(input_data, input_filename):
     logging.debug(f'parser()')
+    #print(f'convert_extracted file() - {input_data}')
+    output_filename = extract_date_filename(input_filename)
+    hostname = socket.gethostname()
+    ip_address = socket.gethostbyname(hostname)
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    filename_without_extension = filename.split('.')[0]
     try:
         # Parse JSON string to dictionary if data is a string
         if isinstance(input_data, str):
             temp_data = json.loads(input_data)
 
-        # Initialize an empty list to store the parsed CSV data
-        temp_parsed_data = []
-
-        # Iterate over each entry in the 'weatherConfiguration' section of the data
-        for entry in temp_data['weatherConfiguration']:
-            # Create a dictionary with the required fields for each entry
-            entry_dict = {
-                'timestamp': entry['timestamp'],
-                'speed': entry['speed']
+        # Initialize the model dictionary
+        model_data = {
+            "weatherData": {
+                "metadata": {
+                    "version": 1.0,
+                    "date_recorded": output_filename.split('.')[0],
+                    "date_transmitted": current_date,
+                    "filename": output_filename,
+                    "src_ip": ip_address,
+                    "hostname": hostname
+                },
+                "data": []
+            },
+            "relationship": {},
+            "validation": {
+                "version_validation": "[0-9]*.[0-9][0-9]",
+                "date_recorded_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
+                "date_transmitted_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
+                "filename_validation": "[2-9][0-9][0-9][0-9]-[0-1][0-2].txt",
+                "src_ip": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b",
+                "hostname_validation": "[0-9a-z]+",
+                "speed_validation": "[0-9]*.[0-9]*"
             }
-            # Append the dictionary to the parsed data list
-            temp_parsed_data.append(entry_dict)
+        }
 
-        # Return the parsed data
-        return temp_parsed_data
+        # Add extracted data to the 'data' section of the weatherData
+        model_data["weatherData"]["data"] = temp_data["data"]
+
+        # Return the model data
+        logging.debug(f'model_data - {model_data}')
+        return model_data
     except ValidationError as err:
         error_info = {
             'messages': err.messages,
@@ -40,9 +74,10 @@ def parser(input_data) -> json:
         return json.dumps(error_info)
 
 
+
 def extract_csv_from_text(file_path) -> json:
     logging.debug(f'extract_csv_from_text() - {file_path}')
-    csv_data = {'weatherConfiguration': []}  # Initialize as a dictionary
+    csv_data = {'data': []}  # Initialize as a dictionary
     try:
         with open(file_path, 'r') as file:
             for line in file:
@@ -51,8 +86,9 @@ def extract_csv_from_text(file_path) -> json:
                 if len(parts) >= 2:
                     timestamp, speed = parts[:2]  # Take only the first two elements
                     # Append a dictionary representing each entry to the 'weatherConfiguration' list
-                    csv_data['weatherConfiguration'].append(
+                    csv_data['data'].append(
                         {'timestamp': timestamp.strip(), 'speed': float(speed.strip())})
+                    #print(f"extract_csv() - {csv_data}")
                 else:
                     logging.error(f"Ignored line: {line.strip()}")  # Log lines with more or fewer than 2 elements
     except FileNotFoundError:
@@ -63,7 +99,9 @@ def extract_csv_from_text(file_path) -> json:
         logging.error(f"An error occurred: {str(e)}")
 
     # Convert the dictionary to a JSON string
-    json_data = json.dumps(csv_data)
+    temp = json.dumps(csv_data).replace('\\', '')
+    temp_1 = json.loads(temp)
+    json_data = json.dumps(temp_1, indent=4)
     logging.info(f'extract data from csv to json() - {json_data}')
     return json_data
 
@@ -129,5 +167,6 @@ if __name__ == "__main__":
 
     print(f"Attempting to parse data from file: {filename}")
     data = extract_csv_from_text(filename)
-    parsed_data = parser(data)
+    parsed_data = convert_extracted_file_to_model(data, filename)
+    print_pretty_json(parsed_data)
     post_json_data(parsed_data, url)
