@@ -4,7 +4,7 @@ import os
 import requests
 from marshmallow import ValidationError
 import json
-import class_weather_model as model
+# import src.class_weather_model as model
 import socket
 from datetime import datetime
 
@@ -19,7 +19,7 @@ def extract_date_filename(file_path):
         print(f"An error occurred: {str(e)}")
         return None
 
-def convert_extracted_file_to_model(input_data, input_filename):
+def convert_extracted_file_to_model(input_data, input_filename) -> json:
     logging.debug(f'parser()')
     #print(f'convert_extracted file() - {input_data}')
     output_filename = extract_date_filename(input_filename)

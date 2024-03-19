@@ -2,23 +2,11 @@
 
 import unittest
 from unittest.mock import patch
-from src.weather_model_parser import parser, extract_csv_from_text
+import datetime
+import json
+from src.weather_model_parser import extract_csv_from_text, convert_extracted_file_to_model, get_absolute_path
 
-class TestParser(unittest.TestCase):
-
-    def test_parser(self):
-        # Mocking the schema.load method to return a fixed dictionary
-        with patch('your_script_name.model.WeatherConfigurationSchema.load') as mock_load:
-            mock_load.return_value = {'result': 'fake_result'}
-
-            # Providing mock data similar to what's passed to the parser function
-            data = {'weatherConfiguration': {'some_data': 'fake_data'}}
-
-            # Expected output after parsing
-            expected_output = {'result': 'fake_result'}
-
-            # Testing the parser function
-            self.assertEqual(parser(data), expected_output)
+class TestWeatherModelParser(unittest.TestCase):
 
     def test_extract_csv_from_text(self):
         # Testing with a sample file content
@@ -51,6 +39,24 @@ class TestParser(unittest.TestCase):
         with patch('builtins.open', unittest.mock.mock_open(read_data=file_content)):
             # Testing the extract_csv_from_text function
             self.assertEqual(extract_csv_from_text('fake_file_path'), file_content)
+
+
+    def test_convert_extracted_file_to_model(self):
+        """
+        This should postivitely test the convert_extracted_file_to_model(input_data, input_filename): only.
+        """
+        filename = 'data/2024-03-07.txt'
+        csv_data = extract_csv_from_text(filename)
+
+        filename_expected = get_absolute_path('extracted_and_converted_example.json')
+        print(f'This is the filaname - {filename_expected}')
+        with open(filename_expected, 'r') as file_object:
+            print(f'file object - {file_object}')
+            expected_json = json.load(file_object.name)
+
+        with self.subTest():
+            return_json = convert_extracted_file_to_model(csv_data, filename)
+            self.assertEqual(return_json, expected_json)
 
 
 if __name__ == '__main__':
