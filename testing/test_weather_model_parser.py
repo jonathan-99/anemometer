@@ -45,15 +45,15 @@ class TestWeatherModelParser(unittest.TestCase):
         """
         This should postivitely test the convert_extracted_file_to_model(input_data, input_filename): only.
         """
-        filename = 'data/2024-03-07.txt'
-        csv_data = extract_csv_from_text(filename)
+        filename = '2024-03-07.txt'
+        csv_data = get_absolute_path(filename)
+        print(f'csv data  - {csv_data}')
 
         filename_expected = get_absolute_path('extracted_and_converted_example.json')
-        print(f'This is the filaname - {filename_expected}')
-        with open(filename_expected, 'r') as file_object:
-            print(f'file object - {file_object}')
-            expected_json = json.load(file_object.name)
-
+        print(f'This is the filename - {filename_expected}')
+        with open(filename_expected, 'r') as file:
+            expected_json = json.load(file)
+            print(f'file object - {expected_json}')
         with self.subTest():
             return_json = convert_extracted_file_to_model(csv_data, filename)
             self.assertEqual(return_json, expected_json)

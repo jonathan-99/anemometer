@@ -20,7 +20,7 @@ def extract_date_filename(file_path):
         return None
 
 def convert_extracted_file_to_model(input_data, input_filename) -> json:
-    logging.debug(f'parser()')
+    logging.debug(f'convert extracted file to model - data - {input_filename}')
     #print(f'convert_extracted file() - {input_data}')
     output_filename = extract_date_filename(input_filename)
     hostname = socket.gethostname()
