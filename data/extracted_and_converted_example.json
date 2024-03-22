@@ -112,10 +112,10 @@
   },
   "validation": {
     "version_validation": "[0-9]*.[0-9][0-9]",
-    "date_recorded_validation": "r'^\d{4}\s\d{2}\s\d{2}\s\d{2}$'",
-    "date_transmitted_validation": "r'^\d{4}\s\d{2}\s\d{2}\s\d{2}$'",
+    "date_recorded_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
+    "date_transmitted_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
     "filename_validation": "[2-9][0-9][0-9][0-9]-[0-1][0-2].txt",
-    "src_ip": "r'\b(?:\d{1,3}\.){3}\d{1,3}\b'",
+    "src_ip": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b",
     "hostname_validation": "[0-9a-z]+",
     "speed_validation": "[0-9]*.[0-9]*"
   }

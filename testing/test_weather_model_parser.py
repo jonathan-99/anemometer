@@ -6,7 +6,17 @@ import datetime
 import json
 from src.weather_model_parser import extract_csv_from_text, convert_extracted_file_to_model, get_absolute_path
 
+
+
 class TestWeatherModelParser(unittest.TestCase):
+    def replace_json(self, json_obj, key: str, test_name: str):
+        # Check if the 'weatherData' key exists in the JSON object
+        if 'weatherData' in json_obj:
+            # Check if the 'metadata' key exists within the 'weatherData' section
+            if 'metadata' in json_obj['weatherData']:
+                # Replace the value of the 'hostname' key with the value of 'test_hostname'
+                json_obj['weatherData']['metadata'][key] = test_name
+        return json_obj
 
     def test_extract_csv_from_text(self):
         # Testing with a sample file content
@@ -35,6 +45,7 @@ class TestWeatherModelParser(unittest.TestCase):
                        "2024 03 07 22,0.6075862068965517,\n"\
                        "2024 03 07 23,0.5158620689655172,"
 
+
         # Creating a temporary file with the sample content
         with patch('builtins.open', unittest.mock.mock_open(read_data=file_content)):
             # Testing the extract_csv_from_text function
@@ -45,18 +56,40 @@ class TestWeatherModelParser(unittest.TestCase):
         """
         This should postivitely test the convert_extracted_file_to_model(input_data, input_filename): only.
         """
-        filename = '2024-03-07.txt'
-        csv_data = get_absolute_path(filename)
-        print(f'csv data  - {csv_data}')
 
+        #extract csv data into json
+        filename = ('2024-03-07.txt')
+        full_filename = get_absolute_path(filename)
+        extracted_csv_data =  extract_csv_from_text(full_filename)
+        extracted_csv_data = json.loads(extracted_csv_data)
+        # print(f'csv data  - {type(extracted_csv_data)} - {extracted_csv_data}')
+
+        #parse csv to json format
+        full_filename = str(full_filename).replace('\\\\','\\')
+        return_json = convert_extracted_file_to_model(extracted_csv_data, full_filename)
+        print(f'return json to be tested - {return_json}')
+
+        #extract expected json data
         filename_expected = get_absolute_path('extracted_and_converted_example.json')
-        print(f'This is the filename - {filename_expected}')
+        # print(f'This is the filename - {filename_expected}')
         with open(filename_expected, 'r') as file:
             expected_json = json.load(file)
-            print(f'file object - {expected_json}')
+
+
+        #amend the expect json with some testing host specific variables.
+        import socket
+        from datetime import datetime
+        local_hostname = socket.gethostname()
+        local_ip_address = socket.gethostbyname(local_hostname)
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        expected_json = self.replace_json(expected_json, "hostname", local_hostname)
+        expected_json = self.replace_json(expected_json, 'src_ip', local_ip_address)
+        expected_json = self.replace_json(expected_json, 'date_transmitted', current_date)
+
+        print(f' extracted_and_converted_example.json - {expected_json}')
+
         with self.subTest():
-            return_json = convert_extracted_file_to_model(csv_data, filename)
-            self.assertEqual(return_json, expected_json)
+            self.assertDictEqual(return_json, expected_json)
 
 
 if __name__ == '__main__':

@@ -19,18 +19,28 @@ def extract_date_filename(file_path):
         print(f"An error occurred: {str(e)}")
         return None
 
+
 def convert_extracted_file_to_model(input_data, input_filename) -> json:
     logging.debug(f'convert extracted file to model - data - {input_filename}')
-    #print(f'convert_extracted file() - {input_data}')
+    # print(f'convert_extracted file() - {input_data}')
     output_filename = extract_date_filename(input_filename)
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
     current_date = datetime.now().strftime('%Y-%m-%d')
-    filename_without_extension = filename.split('.')[0]
+    filename_without_extension = input_filename.split('.')[0]
+
+    temp_data = {}  # Initialize temp_data as an empty dictionary
+
     try:
         # Parse JSON string to dictionary if data is a string
         if isinstance(input_data, str):
             temp_data = json.loads(input_data)
+        elif isinstance(input_data, dict):
+            temp_data = input_data
+        else:
+            logging.error("Invalid input_data format")
+
+        print("Input Data:", input_data)
 
         # Initialize the model dictionary
         model_data = {
@@ -58,7 +68,7 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
         }
 
         # Add extracted data to the 'data' section of the weatherData
-        model_data["weatherData"]["data"] = temp_data["data"]
+        model_data["weatherData"]["data"] = temp_data.get("data", [])  # Use .get() method to safely access "data"
 
         # Return the model data
         logging.debug(f'model_data - {model_data}')
@@ -74,8 +84,7 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
         return json.dumps(error_info)
 
 
-
-def extract_csv_from_text(file_path) -> json:
+def extract_csv_from_text(file_path) -> str:
     logging.debug(f'extract_csv_from_text() - {file_path}')
     csv_data = {'data': []}  # Initialize as a dictionary
     try:
@@ -85,25 +94,23 @@ def extract_csv_from_text(file_path) -> json:
                 parts = line.strip().split(',')
                 if len(parts) >= 2:
                     timestamp, speed = parts[:2]  # Take only the first two elements
-                    # Append a dictionary representing each entry to the 'weatherConfiguration' list
+                    # Append a dictionary representing each entry to the 'data' list
                     csv_data['data'].append(
                         {'timestamp': timestamp.strip(), 'speed': float(speed.strip())})
-                    #print(f"extract_csv() - {csv_data}")
                 else:
                     logging.error(f"Ignored line: {line.strip()}")  # Log lines with more or fewer than 2 elements
-    except FileNotFoundError:
-        print(f"File '{file_path}' not found.")
-        logging.error(f"File '{file_path}' not found.")
+    except FileNotFoundError as e:
+        logging.error(f"File '{file_path}' not found: {str(e)}")
+        raise
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
         logging.error(f"An error occurred: {str(e)}")
+        raise
 
     # Convert the dictionary to a JSON string
-    temp = json.dumps(csv_data).replace('\\', '')
-    temp_1 = json.loads(temp)
-    json_data = json.dumps(temp_1, indent=4)
+    json_data = json.dumps(csv_data, indent=4)
     logging.info(f'extract data from csv to json() - {json_data}')
     return json_data
+
 
 
 def post_json_data(json_data, input_url):
