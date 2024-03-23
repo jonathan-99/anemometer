@@ -1,6 +1,7 @@
 import logging
 import sys
 import os
+import re
 import requests
 from marshmallow import ValidationError
 import json
@@ -13,7 +14,8 @@ def extract_date_filename(file_path):
     try:
         # Extract the filename from the file path
         filename = os.path.basename(file_path)
-
+        fname = get_absolute_path(file_path)
+        print(f'filename - {filename} - fname - {fname}')
         return filename
     except Exception as e:
         print(f"An error occurred: {str(e)}")
@@ -84,11 +86,20 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
         return json.dumps(error_info)
 
 
-def extract_csv_from_text(file_path) -> str:
+def extract_csv_from_text(file_path) -> json:
     logging.debug(f'extract_csv_from_text() - {file_path}')
     csv_data = {'data': []}  # Initialize as a dictionary
     try:
-        with open(file_path, 'r') as file:
+        # Normalize the file path
+        normalized_file_path = os.path.normpath(file_path)
+
+        # Get the absolute path to the file
+        abs_file_path = os.path.abspath(normalized_file_path)
+
+        #file_path = re.sub(r'\\\\', r'\\', file_path)
+        #print(f'file_path 2 - {file_path}')
+
+        with open(abs_file_path, 'r') as file:
             for line in file:
                 # Split each line by comma to get key-value pairs
                 parts = line.strip().split(',')
@@ -135,8 +146,10 @@ def get_absolute_path(local_filename):
     # If the filename is provided without a path, assume it is in the 'data' directory
     if not os.path.isabs(local_filename):
         data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+        print(f'datat_dir - {data_dir}')
         data_dir = data_dir.replace('\\src', '')
         local_filename = os.path.join(data_dir, local_filename)
+        print(f'local_filename - {local_filename}')
     return local_filename
 
 
