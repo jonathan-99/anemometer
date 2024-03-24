@@ -5,7 +5,7 @@ import re
 import requests
 from marshmallow import ValidationError
 import json
-# import src.class_weather_model as model
+from src.class_weather_model import WeatherModelSchema as model
 import socket
 from datetime import datetime
 
@@ -13,25 +13,32 @@ from datetime import datetime
 def extract_date_filename(file_path):
     try:
         # Extract the filename from the file path
-        filename = os.path.basename(file_path)
-        fname = get_absolute_path(file_path)
-        print(f'filename - {filename} - fname - {fname}')
-        return filename
+        used_filename = os.path.basename(file_path)
+        logging.debug(f'extract_date_filename() filename - {filename}')
+        return used_filename
     except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        logging.error(f"An error occurred: {str(e)}")
         return None
 
 
-def convert_extracted_file_to_model(input_data, input_filename) -> json:
+def convert_extracted_file_to_model(input_data: dict, input_filename: str) -> dict:
+    """
+    This function takes the text file csv data of weather (datetime and speed) which has been converted into
+    a json format. Uses Marshmallow to create the standard model and embed the weather data into it.
+
+    :param input_data: JSON formatted weather data
+    :type input_data: dict
+    :param input_filename: Name of the input file
+    :type input_filename: str
+    :return: Weather model embedded with the data
+    :rtype: dict
+    """
     logging.debug(f'convert extracted file to model - data - {input_filename}')
-    # print(f'convert_extracted file() - {input_data}')
     output_filename = extract_date_filename(input_filename)
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)
     current_date = datetime.now().strftime('%Y-%m-%d')
     filename_without_extension = input_filename.split('.')[0]
-
-    temp_data = {}  # Initialize temp_data as an empty dictionary
 
     try:
         # Parse JSON string to dictionary if data is a string
@@ -42,9 +49,14 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
         else:
             logging.error("Invalid input_data format")
 
-        print("Input Data:", input_data)
+        # Convert the input data to a list of dictionaries
+        data_list = []
+        for line in temp_data.get('data', []):  # Access 'data' key safely
+            timestamp, speed = line.get('timestamp', ''), line.get('speed',
+                                                                   '')  # Access 'timestamp' and 'speed' keys safely
+            data_list.append({"timestamp": timestamp, "speed": speed})
 
-        # Initialize the model dictionary
+        # Create the model data dictionary
         model_data = {
             "weatherData": {
                 "metadata": {
@@ -55,10 +67,10 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
                     "src_ip": ip_address,
                     "hostname": hostname
                 },
-                "data": []
+                "data": data_list  # Include the converted data list
             },
-            "relationship": {},
-            "validation": {
+            "relationship": {},  # Initialize 'relationship'
+            "validation": {  # Initialize 'validation' with its rules
                 "version_validation": "[0-9]*.[0-9][0-9]",
                 "date_recorded_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
                 "date_transmitted_validation": "^\\d{4}\\s\\d{2}\\s\\d{2}\\s\\d{2}$",
@@ -68,9 +80,6 @@ def convert_extracted_file_to_model(input_data, input_filename) -> json:
                 "speed_validation": "[0-9]*.[0-9]*"
             }
         }
-
-        # Add extracted data to the 'data' section of the weatherData
-        model_data["weatherData"]["data"] = temp_data.get("data", [])  # Use .get() method to safely access "data"
 
         # Return the model data
         logging.debug(f'model_data - {model_data}')
@@ -96,9 +105,6 @@ def extract_csv_from_text(file_path) -> json:
         # Get the absolute path to the file
         abs_file_path = os.path.abspath(normalized_file_path)
 
-        #file_path = re.sub(r'\\\\', r'\\', file_path)
-        #print(f'file_path 2 - {file_path}')
-
         with open(abs_file_path, 'r') as file:
             for line in file:
                 # Split each line by comma to get key-value pairs
@@ -123,7 +129,6 @@ def extract_csv_from_text(file_path) -> json:
     return json_data
 
 
-
 def post_json_data(json_data, input_url):
     logging.debug(f'post_json_data() - {input_url} - {json_data}')
     try:
@@ -146,10 +151,10 @@ def get_absolute_path(local_filename):
     # If the filename is provided without a path, assume it is in the 'data' directory
     if not os.path.isabs(local_filename):
         data_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
-        print(f'datat_dir - {data_dir}')
+        logging.debug(f'data_dir - {data_dir}')
         data_dir = data_dir.replace('\\src', '')
         local_filename = os.path.join(data_dir, local_filename)
-        print(f'local_filename - {local_filename}')
+        logging.debug(f'local_filename - {local_filename}')
     return local_filename
 
 
@@ -157,15 +162,38 @@ def print_pretty_json(input_data):
     try:
         # Convert the parsed data to JSON with indentation for better readability
         pretty_json = json.dumps(input_data, indent=2)
-        print("Parsed Data:")
-        print(pretty_json)
+        print(f'Parsed Data - {pretty_json}')
     except Exception as e:
-        print(f"An error occurred while printing JSON data: {str(e)}")
+        logging.error(f"An error occurred while printing JSON data: {str(e)}")
+
+
+def run_parser(self, ip_address: str, port: int, internal_filename='2024-03-07.txt'):
+    """
+    This is a simple function to execute the code, aimed at the super-argparse file of anemometer.
+    """
+    # Remove single quotes from the filename if present
+    internal_filename = internal_filename.strip("'")
+
+    # Get the absolute file path
+    internal_filename = get_absolute_path(internal_filename)
+
+    if not os.path.isfile(internal_filename):
+        logging.debug(f"File '{internal_filename}' not found. Exiting.")
+        logging.error(f"File '{internal_filename}' not found. Exiting.")
+        sys.exit(1)
+
+    url = f"http://{ip_address}:{port}/api/data"
+
+    logging.info(f"Attempting to parse data from file: {internal_filename}")
+    data = extract_csv_from_text(internal_filename)
+    parsed_data = convert_extracted_file_to_model(data, internal_filename)
+    print_pretty_json(parsed_data)
+    post_json_data(parsed_data, url)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print("Usage: python3 script.py <IP_address> <port> [<filename>]")
+        logging.debug("Usage: python3 script.py <IP_address> <port> [<filename>]")
         sys.exit(1)
 
     ip_address = sys.argv[1]
@@ -179,7 +207,6 @@ if __name__ == "__main__":
     filename = get_absolute_path(filename)
 
     if not os.path.isfile(filename):
-        print(f"File '{filename}' not found. Exiting.")
         logging.error(f"File '{filename}' not found. Exiting.")
         sys.exit(1)
 
