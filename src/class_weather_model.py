@@ -1,27 +1,16 @@
 #!/usr/bin/env python3
 from marshmallow import Schema, fields
 
-class WeatherConfigurationSchema(Schema):
-    class Meta:
-        fields = ("version", "date_submitted", "date_received", "filename", "src_ip", "hostname")
 
-    version = fields.Float()
-    date_submitted = fields.DateTime()
-    date_received = fields.DateTime()
-    filename = fields.String()
-    src_ip = fields.String()
-    hostname = fields.String()
+class WeatherDataSchema(Schema):
+    timestamp = fields.DateTime(format="%Y %m %d %H")
+    speed = fields.Float()
 
-    # Define the nested schema for the 'data' field
-    class DataSchema(Schema):
-        filename = fields.String()
-        datetime = fields.DateTime()
-        speed = fields.Float()
 
-    data = fields.Nested(DataSchema)
-
+class WeatherModelSchema(Schema):
+    metadata = fields.Dict()
+    data = fields.Nested(WeatherDataSchema, many=True)
     relationship = fields.Dict()
-
     validation = fields.Dict()
 
 

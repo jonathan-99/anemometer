@@ -1,11 +1,10 @@
 import logging
 import sys
 import os
-import re
 import requests
 from marshmallow import ValidationError
 import json
-from src.class_weather_model import WeatherModelSchema as model
+from src.class_weather_model import WeatherModelSchema as Model
 import socket
 from datetime import datetime
 
@@ -36,10 +35,11 @@ def convert_extracted_file_to_model(input_data: dict, input_filename: str) -> di
     logging.debug(f'convert extracted file to model - data - {input_filename}')
     output_filename = extract_date_filename(input_filename)
     hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
+    internal_ip_address = socket.gethostbyname(hostname)
     current_date = datetime.now().strftime('%Y-%m-%d')
     filename_without_extension = input_filename.split('.')[0]
 
+    temp_data = []
     try:
         # Parse JSON string to dictionary if data is a string
         if isinstance(input_data, str):
@@ -61,10 +61,10 @@ def convert_extracted_file_to_model(input_data: dict, input_filename: str) -> di
             "weatherData": {
                 "metadata": {
                     "version": 1.0,
-                    "date_recorded": output_filename.split('.')[0],
+                    "date_recorded": output_filename,
                     "date_transmitted": current_date,
-                    "filename": output_filename,
-                    "src_ip": ip_address,
+                    "filename": filename_without_extension,
+                    "src_ip": internal_ip_address,
                     "hostname": hostname
                 },
                 "data": data_list  # Include the converted data list
@@ -92,7 +92,8 @@ def convert_extracted_file_to_model(input_data: dict, input_filename: str) -> di
             'valid_data': err.valid_data
         }
         logging.error(f'ValidationError - {error_info}')
-        return json.dumps(error_info)
+        logging.error(json.dumps(error_info))
+    return {'need': 'something better'}  # this whole function needs refactoring.
 
 
 def extract_csv_from_text(file_path) -> json:
@@ -167,7 +168,7 @@ def print_pretty_json(input_data):
         logging.error(f"An error occurred while printing JSON data: {str(e)}")
 
 
-def run_parser(self, ip_address: str, port: int, internal_filename='2024-03-07.txt'):
+def run_parser(this_ip_address: str, this_port: int, internal_filename='2024-03-07.txt'):
     """
     This is a simple function to execute the code, aimed at the super-argparse file of anemometer.
     """
@@ -182,13 +183,13 @@ def run_parser(self, ip_address: str, port: int, internal_filename='2024-03-07.t
         logging.error(f"File '{internal_filename}' not found. Exiting.")
         sys.exit(1)
 
-    url = f"http://{ip_address}:{port}/api/data"
+    this_url = f"http://{this_ip_address}:{this_port}/api/data"
 
     logging.info(f"Attempting to parse data from file: {internal_filename}")
-    data = extract_csv_from_text(internal_filename)
-    parsed_data = convert_extracted_file_to_model(data, internal_filename)
-    print_pretty_json(parsed_data)
-    post_json_data(parsed_data, url)
+    this_data = extract_csv_from_text(internal_filename)
+    this_parsed_data = convert_extracted_file_to_model(this_data, internal_filename)
+    print_pretty_json(this_parsed_data)
+    post_json_data(this_parsed_data, this_url)
 
 
 if __name__ == "__main__":
