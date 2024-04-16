@@ -2,30 +2,10 @@
 
 container_name='anemometer-test'
 
-# Function to wait for container to be healthy
-wait_for_container_health() {
-    timeout=60
-    while [[ $timeout -gt 0 ]]; do
-        # Check if container has a health check defined
-        if docker inspect --format='{{.State.Health}}' $1 > /dev/null 2>&1; then
-            if docker inspect --format='{{.State.Health.Status}}' $1 | grep -q "healthy"; then
-                echo "Container is healthy."
-                return 0
-            fi
-        else
-            # If health check is not defined, consider container as healthy if it's running
-            if [ "$(docker inspect --format '{{.State.Status}}' $1)" == "running" ]; then
-                echo "Container is running but does not have a health check defined."
-                return 0
-            fi
-        fi
-        sleep 1
-        ((timeout--))
-    done
-    echo "Timed out waiting for the container to be healthy."
-    return 1
+# Function to check if Docker container is running
+container_running() {
+    docker ps --filter "name=$container_name" --format '{{.Names}}' | grep -q "$container_name"
 }
-
 
 # Check if the container already exists
 if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
@@ -38,45 +18,23 @@ if docker ps -a --format '{{.Names}}' | grep -q $container_name; then
         echo "Container is not running, starting it..."
         docker start $container_name
         # Introduce a delay until the container is healthy
-        if ! wait_for_container_health $CONTAINER_ID; then
-            echo "Error: Container initialization failed. Exiting."
-            exit 1
-        fi
+        sleep 20
     fi
 else
     echo "Container '$container_name' does not exist, creating it..."
     CONTAINER_ID=$(docker run --rm -d --name $container_name --privileged --entrypoint /bin/bash arm32v7/ubuntu:latest)
     echo "Container ID after creation: $CONTAINER_ID"
 
-    # Introduce a delay for container initialization
-    if ! wait_for_container_health $CONTAINER_ID; then
-        echo "Error: Container initialization failed. Exiting."
-        exit 1
-    fi
+    sleep 20
 fi
 
-if [ -z "$CONTAINER_ID" ]; then
-    echo "Failed to create or retrieve container ID. Exiting."
-    exit 1
-fi
-
-# Check if the container exists before proceeding
-if docker ps -a --format '{{.ID}}' | grep -q $CONTAINER_ID; then
-    echo "Container exists, proceeding with package installation..."
-else
-    echo "Error: Container does not exist. Exiting."
-    exit 1
-fi
-
-
-# Check if container creation was successful
 if [ -z "$CONTAINER_ID" ]; then
     echo "Failed to create or retrieve container ID. Exiting."
     exit 1
 fi
 
 # Print container ID
-echo "Container ID: $CONTAINER_ID"
+echo "** Container ID: $CONTAINER_ID"
 
 # Check if the container exists before executing commands
 if docker ps -a --format '{{.ID}}' | grep -q $CONTAINER_ID; then
@@ -102,16 +60,26 @@ if docker ps -a --format '{{.ID}}' | grep -q $CONTAINER_ID; then
     docker exec $CONTAINER_ID apt-get update -y
     docker exec $CONTAINER_ID apt-get upgrade -y
 
-    # Set display for GUI applications if needed
-    docker exec $CONTAINER_ID /bin/bash -c "export DISPLAY=\$(cat /etc/resolv.conf | grep nameserver | awk '{print \$2}'):0"
+    # Clone Anemometer using find
+    #if docker exec $CONTAINER_ID find /path/to/container/root -name 'anemometer' -type d | grep -q 'anemometer'; then
+    #    echo "FIND - Anemometer is already cloned in the container."
+    #else
+    #    echo "FIND - Cloning Anemometer repository..."
+    #    docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+    #fi
 
-    # Clone Anemometer repository if not already cloned
-    if docker exec $CONTAINER_ID ls anemometer &> /dev/null; then
-        echo "Anemometer is already cloned in the container."
-    else
-        echo "Cloning Anemometer repository..."
-        docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+
+    # Remove Anemometer repository if already cloned
+    docker exec $CONTAINER_ID ls anemometer &> /dev/null
+    if [ $? -eq 0 ]; then
+        echo "Anemometer repository already exists in the container. Removing..."
+        docker exec $CONTAINER_ID rm -rf anemometer
     fi
+
+    # Clone Anemometer repository
+    echo "Cloning Anemometer repository..."
+    docker exec $CONTAINER_ID git clone https://github.com/jonathan-99/anemometer.git anemometer
+
 
     # Print OS version
     echo "OS Version:"
