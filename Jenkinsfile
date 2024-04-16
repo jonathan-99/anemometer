@@ -1,6 +1,5 @@
 #! groovy
 
-
 // This file is designed to provide a jenkins instance with a pipeline to download, unittest, coverage test this
 // anemometer project.
 
@@ -12,6 +11,7 @@ pipeline {
         stage('checks') {
             steps {
                 script {
+                    // need to add a check on the image
                     sh """
                         echo "this is the npm version ${sh(script: 'git --version', returnStdout: true).trim()}"
                         echo "this is the npm version ${sh(script: 'python --version', returnStdout: true).trim()}"
@@ -55,6 +55,19 @@ pipeline {
                         filePermissions=\$(ls -l \$file2)
                         echo "File permissions: \$filePermissions"
                         script -q -c "./\$file2" /dev/null
+                    """
+                }
+            }
+        }
+        stage('stop docker container'){
+            steps {
+                script {
+                    sh """
+                        file3='jenkins_scripts/close_docker.sh'
+                        chmod +x \$file3
+                        filePermissions=\$(ls -l \$file3)
+                        echo "File permissions: \$filePermissions"
+                        script -q -c "./\$file3" /dev/null
                     """
                 }
             }
