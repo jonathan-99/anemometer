@@ -1,6 +1,5 @@
 #! groovy
 
-
 // This file is designed to provide a jenkins instance with a pipeline to download, unittest, coverage test this
 // anemometer project.
 
